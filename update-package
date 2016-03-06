@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+base_dir="$PWD"
+packages_dir="$base_dir/packages"
+repo_dir="$base_dir/ubuntu"
+incoming_dir="$repo_dir/incoming"
+
+scriptname=$(basename $0)
+
+if [ $# -lt 1 ]; then
+    echo "Usage $scriptname <package-name> [noimport]"
+    exit 1
+fi
+
+package=$1
+noimport=$2
+
+control_file="${package}.control"
+
+if [ ! -f "$packages_dir/$control_file" ]; then
+    echo "Package control file not found"
+    exit 2
+fi
+
+temp_dir=$(mktemp -d /tmp/update-package.XXXXXXXXXX)
+cp "$packages_dir/$control_file" $temp_dir
+(
+    cd $temp_dir
+    equivs-build --full "$control_file"
+    rm "$control_file"
+    cp $package* "$incoming_dir"
+)
+rm -rf $temp_dir
+
+if [ "$noimport" != "noimport" ]; then
+    cd "$repo_dir"
+    reprepro -VVV processincoming incoming-unstable
+fi

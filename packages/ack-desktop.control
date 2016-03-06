@@ -1,0 +1,32 @@
+Package: ack-desktop
+Version: 1.77
+Maintainer: Alberto Donato <alberto.donato@gmail.com>
+Architecture: all
+Section: misc
+Priority: optional
+Depends:
+ emacs-snapshot, emacs-snapshot-el,
+ bpython, ipython, ipython3, python-pip, python-virtualenv,
+ python-flake8, python3-flake8, python-demjson,
+ libxml2-utils,
+ subversion, git-core, mercurial,
+ bzr, bzrtools, bzr-builddeb, bzr-pipeline, bzr-email,
+ vim,
+ colordiff, patchutils, quilt, guilt,
+ silversearcher-ag, tree, htop,
+ dh-make, dpatch, equivs, ubuntu-dev-tools,
+ golang-go,
+ reprepro,
+ encfs, libpam-mount, openssh-server, sshuttle,
+ synergy,
+ tmux, run-one,
+ mplayer, inkscape, gimp, gphoto2,
+ qemu-kvm, virt-manager, python-spice-client-gtk,
+ lxc, lxd,
+ python-openstackclient,
+ network-manager-openvpn-gnome, resolvconf, curl,
+ chromium-browser,
+ pastebinit,
+ python3-toolrack
+Description: metapackage for installation of my package selection.
+ This installs a whole set of packages that I currently use on Ubuntu desktops.

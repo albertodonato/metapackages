@@ -1,0 +1,21 @@
+Package: landscape-devel-lxc
+Version: 1.10
+Maintainer: Alberto Donato <alberto.donato@canonical.com>
+Architecture: all
+Section: devel
+Priority: optional
+Depends:
+ bash-completion, build-essential, bzr-pipeline,
+ ipython,
+ silversearcher-ag, tree,
+ diffutils, patchutils, colordiff,
+ wget, curl,
+ sshuttle,
+ language-pack-en-base, apt-transport-https,
+ python-apt, python-pycurl,
+ python-openstackclient, python-keystoneclient, python-novaclient,
+ python-swiftclient, python-cinderclient, python-glanceclient,
+ python-neutronclient,
+ encfs
+Description: metapackage for Landscape development environment in LXC.
+ This installs a set of packages for Landscape development environment in LXC.
