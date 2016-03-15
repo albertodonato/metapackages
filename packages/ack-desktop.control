@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 1.78
+Version: 1.79
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Section: misc
@@ -7,7 +7,8 @@ Priority: optional
 Depends:
  emacs-snapshot, emacs-snapshot-el,
  bpython, ipython, ipython3, python-pip, python-virtualenv,
- flake8,, python-demjson,
+ python-demjson, python-jinja2,
+ flake8,
  libxml2-utils,
  subversion, git-core, mercurial,
  bzr, bzrtools, bzr-builddeb, bzr-pipeline, bzr-email,
