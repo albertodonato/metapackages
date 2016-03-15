@@ -1,5 +1,5 @@
 Package: landscape-devel-lxc
-Version: 1.10
+Version: 1.11
 Maintainer: Alberto Donato <alberto.donato@canonical.com>
 Architecture: all
 Section: devel
@@ -16,6 +16,7 @@ Depends:
  python-openstackclient, python-keystoneclient, python-novaclient,
  python-swiftclient, python-cinderclient, python-glanceclient,
  python-neutronclient,
+ silversearcher-ag,
  encfs
 Description: metapackage for Landscape development environment in LXC.
  This installs a set of packages for Landscape development environment in LXC.
