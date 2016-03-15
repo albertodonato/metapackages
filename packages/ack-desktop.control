@@ -7,7 +7,7 @@ Priority: optional
 Depends:
  emacs-snapshot, emacs-snapshot-el,
  bpython, ipython, ipython3, python-pip, python-virtualenv,
- python-demjson, python-jinja2,
+ python-demjson,
  flake8,
  libxml2-utils,
  subversion, git-core, mercurial,
