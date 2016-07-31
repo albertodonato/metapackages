@@ -22,17 +22,13 @@ if [ ! -f "$packages_dir/$control_file" ]; then
     exit 2
 fi
 
-temp_dir=$(mktemp -d /tmp/update-package.XXXXXXXXXX)
-cp "$packages_dir/$control_file" $temp_dir
-(
-    cd $temp_dir
-    equivs-build --full "$control_file"
-    rm "$control_file"
-    cp $package* "$incoming_dir"
-)
-rm -rf $temp_dir
+equivs-build "$packages_dir/$control_file"
+
+debfile="../$package*.deb"
 
 if [ "$noimport" != "noimport" ]; then
     cd "$repo_dir"
-    reprepro -VVV processincoming incoming-unstable
+    reprepro -VVV includedeb unstable $debfile
 fi
+
+rm $debfile
