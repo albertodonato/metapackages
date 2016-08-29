@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 1.83
+Version: 1.84
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Section: misc
@@ -21,7 +21,7 @@ Depends:
  encfs, libpam-mount, openssh-server, sshuttle,
  synergy,
  tmux, tmuxinator, run-one, xclip,
- mplayer, inkscape, gimp, gphoto2,
+ mpv, inkscape, gimp, gphoto2,
  qemu-kvm, qemu-efi, ovmf, virt-manager, python-spice-client-gtk,
  lxc, lxd,
  python-openstackclient,
