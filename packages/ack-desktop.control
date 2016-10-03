@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 1.84
+Version: 1.85
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Section: misc
@@ -27,6 +27,7 @@ Depends:
  python-openstackclient,
  network-manager-openvpn-gnome, resolvconf, curl,
  chromium-browser,
+ indicator-cpufreq,
  pastebinit,
  python3-toolrack
 Description: metapackage for installation of my package selection.
