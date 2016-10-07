@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 1.85
+Version: 1.86
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Section: misc
@@ -22,7 +22,7 @@ Depends:
  synergy,
  tmux, tmuxinator, run-one, xclip,
  mpv, inkscape, gimp, gphoto2,
- qemu-kvm, qemu-efi, ovmf, virt-manager, python-spice-client-gtk,
+ qemu-kvm, qemu-efi, ovmf, virt-manager,
  lxc, lxd,
  python-openstackclient,
  network-manager-openvpn-gnome, resolvconf, curl,
