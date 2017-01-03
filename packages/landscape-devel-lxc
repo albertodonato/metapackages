@@ -2,6 +2,7 @@ Package: landscape-devel-lxc
 Version: 1.15
 Maintainer: Alberto Donato <alberto.donato@canonical.com>
 Architecture: all
+Component: main
 Section: devel
 Priority: optional
 Depends:

@@ -1,0 +1,69 @@
+#!/bin/bash -e
+#
+# Build packages and export repository for metapackages.
+#
+
+SCRIPTNAME=$(basename $0)
+
+BASE_DIR="$PWD"
+PACKAGES_DIR="$BASE_DIR/packages"
+REPO_DIR="$BASE_DIR/ubuntu"
+
+setup_gpg() {
+    export GNUPGHOME=$(mktemp -d)
+    gpg --import < $BASE_DIR/seckey.gpg
+}
+
+
+cleanup_gpg() {
+    rm -rf $GNUPGHOME
+}
+
+
+setup_repo() {
+    export REPREPRO_BASEDIR=$(mktemp -d)
+    rm -rf $REPO_DIR
+    mkdir -p $REPO_DIR
+    cp $BASE_DIR/pubkey.gpg $REPO_DIR
+}
+
+
+build_package() {
+    local package="$1"
+    local control_file="$PACKAGES_DIR/$package"
+    if [ ! -f "$control_file" ]; then
+        echo "Skipping unknown package $package"
+        return 1
+    fi
+    equivs-build "$control_file"
+}
+
+
+import_package() {
+    local package="$1"
+    local debfile="${package}*.deb"
+    local opts="--basedir $REPREPRO_BASEDIR --confdir $BASE_DIR/conf --outdir $REPO_DIR -VVV"
+    reprepro $opts includedeb unstable $debfile
+    rm $debfile
+}
+
+
+cleanup_repo() {
+    rm -rf $REPREPRO_BASEDIR
+}
+
+
+packages="$@"
+if [ $# -eq 0 ]; then
+    packages="$(cd $PACKAGES_DIR; ls)"
+fi
+
+setup_gpg
+setup_repo
+
+for package in $packages; do
+    build_package $package || continue
+    import_package $package
+done
+
+cleanup_gpg

@@ -1,13 +1,14 @@
 Package: ack-desktop
-Version: 1.86
+Version: 1.87
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
+Component: main
 Section: misc
 Priority: optional
 Depends:
  emacs-snapshot, emacs-snapshot-el,
  ipython, ipython3, python-pip, python-virtualenv,
- python-demjson,
+ jq, python-demjson,
  flake8,
  libxml2-utils,
  git-core, mercurial,

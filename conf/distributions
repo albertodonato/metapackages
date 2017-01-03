@@ -1,0 +1,7 @@
+Codename: unstable
+Architectures: source i386 amd64
+Origin: ack-unstable
+Label: Ack's repository
+Components: main
+#SignWith: 9E2823B3
+SignWith: 123F6136
