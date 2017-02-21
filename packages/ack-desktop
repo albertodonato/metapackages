@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 1.87
+Version: 1.88
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -12,7 +12,7 @@ Depends:
  flake8,
  libxml2-utils,
  git-core, mercurial,
- bzr, bzrtools, bzr-builddeb, bzr-pipeline, bzr-email,
+ bzr, bzrtools, bzr-builddeb, bzr-pipeline,
  vim,
  colordiff, patchutils, quilt, guilt,
  silversearcher-ag, tree, htop,
@@ -24,7 +24,7 @@ Depends:
  tmux, tmuxinator, run-one, xclip,
  mpv, inkscape, gimp, gphoto2,
  qemu-kvm, qemu-efi, ovmf, virt-manager,
- lxc, lxd,
+ lxd,
  python-openstackclient,
  network-manager-openvpn-gnome, resolvconf, curl,
  chromium-browser,
