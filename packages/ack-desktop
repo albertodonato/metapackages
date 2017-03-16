@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 1.88
+Version: 1.89
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -10,6 +10,7 @@ Depends:
  ipython, ipython3, python-pip, python-virtualenv,
  jq, python-demjson,
  flake8,
+ shellcheck,
  libxml2-utils,
  git-core, mercurial,
  bzr, bzrtools, bzr-builddeb, bzr-pipeline,
@@ -29,7 +30,6 @@ Depends:
  network-manager-openvpn-gnome, resolvconf, curl,
  chromium-browser,
  indicator-cpufreq,
- pastebinit,
- python3-toolrack
+ pastebinit
 Description: metapackage for installation of my package selection.
  This installs a whole set of packages that I currently use on Ubuntu desktops.
