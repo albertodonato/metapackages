@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 1.91
+Version: 92
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -7,7 +7,8 @@ Section: misc
 Priority: optional
 Depends:
  emacs-snapshot, emacs-snapshot-el,
- ipython, ipython3, python3-pip, python3-virtualenv,
+ ipython, python-ipdb,
+ ipython3, python3-pip, python3-virtualenv, python3-ipdb, 
  jq, python-demjson,
  flake8,
  shellcheck, tidy,
@@ -29,7 +30,6 @@ Depends:
  python3-openstackclient,
  network-manager-openvpn-gnome, resolvconf, curl,
  chromium-browser,
- indicator-cpufreq,
  pastebinit
 Description: metapackage for installation of my package selection.
  This installs a whole set of packages that I currently use on Ubuntu desktops.
