@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 92
+Version: 93
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -30,6 +30,8 @@ Depends:
  python3-openstackclient,
  network-manager-openvpn-gnome, resolvconf, curl,
  chromium-browser,
- pastebinit
+ pastebinit,
+ gnome-shell-extension-pixelsaver, gnome-shell-extension-better-volume,
+ gnome-shell-extension-top-icons-plus
 Description: metapackage for installation of my package selection.
  This installs a whole set of packages that I currently use on Ubuntu desktops.
