@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 93
+Version: 96
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -7,8 +7,8 @@ Section: misc
 Priority: optional
 Depends:
  emacs-snapshot, emacs-snapshot-el,
- ipython, python-ipdb,
- ipython3, python3-pip, python3-virtualenv, python3-ipdb, 
+ ipython, ipython3, python-ipdb, python3-ipdb,
+ virtualenv, python-pip, python3-pip,
  jq, python-demjson,
  flake8,
  shellcheck, tidy,
@@ -32,6 +32,7 @@ Depends:
  chromium-browser,
  pastebinit,
  gnome-shell-extension-pixelsaver, gnome-shell-extension-better-volume,
- gnome-shell-extension-top-icons-plus
+ gnome-shell-extension-top-icons-plus, gnome-shell-extension-system-monitor,
+ dmz-cursor-theme
 Description: metapackage for installation of my package selection.
  This installs a whole set of packages that I currently use on Ubuntu desktops.
