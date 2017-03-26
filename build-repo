@@ -3,11 +3,11 @@
 # Build packages and export repository for metapackages.
 #
 
-SCRIPTNAME=$(basename $0)
-
 BASE_DIR="$PWD"
 PACKAGES_DIR="$BASE_DIR/packages"
 REPO_DIR="$BASE_DIR/ubuntu"
+
+export REPREPRO_CONFIG_DIR="$BASE_DIR/conf"
 
 setup_gpg() {
     export GNUPGHOME=$(mktemp -d)
@@ -21,7 +21,7 @@ cleanup_gpg() {
 
 
 setup_repo() {
-    export REPREPRO_BASEDIR=$(mktemp -d)
+    export REPREPRO_BASE_DIR=$(mktemp -d)
     rm -rf $REPO_DIR
     mkdir -p $REPO_DIR
     cp $BASE_DIR/pubkey.gpg $REPO_DIR
@@ -42,14 +42,14 @@ build_package() {
 import_package() {
     local package="$1"
     local debfile="${package}*.deb"
-    local opts="--basedir $REPREPRO_BASEDIR --confdir $BASE_DIR/conf --outdir $REPO_DIR -VVV"
+    local opts="--outdir $REPO_DIR -VVV"
     reprepro $opts includedeb unstable $debfile
     rm $debfile
 }
 
 
 cleanup_repo() {
-    rm -rf $REPREPRO_BASEDIR
+    rm -rf $REPREPRO_BASE_DIR
 }
 
 
@@ -67,3 +67,4 @@ for package in $packages; do
 done
 
 cleanup_gpg
+cleanup_repo
