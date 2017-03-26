@@ -1,0 +1,5 @@
+#!/bin/sh
+
+REPO_DIR="$PWD/ubuntu/pool"
+[ ! -d "$REPO_DIR" ] && exit 1
+find "$REPO_DIR" -type f | sed 's,.*/\([^_]\+\)_\([^_]\+\).*,\1 \2,'
