@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 96
+Version: 97
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -31,6 +31,7 @@ Depends:
  network-manager-openvpn-gnome, resolvconf, curl,
  chromium-browser,
  pastebinit,
+ dconf-editor,
  gnome-shell-extension-pixelsaver, gnome-shell-extension-better-volume,
  gnome-shell-extension-top-icons-plus, gnome-shell-extension-system-monitor,
  dmz-cursor-theme
