@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 97
+Version: 98
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -32,8 +32,6 @@ Depends:
  chromium-browser,
  pastebinit,
  dconf-editor,
- gnome-shell-extension-pixelsaver, gnome-shell-extension-better-volume,
- gnome-shell-extension-top-icons-plus, gnome-shell-extension-system-monitor,
  dmz-cursor-theme
 Description: metapackage for installation of my package selection.
  This installs a whole set of packages that I currently use on Ubuntu desktops.
