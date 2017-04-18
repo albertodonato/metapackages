@@ -1,5 +1,5 @@
 Package: devel-dependencies
-Version: 1
+Version: 2
 Maintainer: Alberto Donato <alberto.donato@canonical.com>
 Architecture: all
 Component: main
@@ -16,6 +16,6 @@ Depends:
  wget, curl,
  sshuttle,
  language-pack-en-base, apt-transport-https,
- encfs
+ encfs, libpam-encfs
 Description: metapackage for development environment setup
  Metapackage pulling packages needed for setting up development environment
