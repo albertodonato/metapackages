@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 98
+Version: 99
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -10,10 +10,9 @@ Depends:
  ipython, ipython3, python-ipdb, python3-ipdb,
  virtualenv, python-pip, python3-pip,
  jq, python-demjson,
- flake8,
- shellcheck, tidy,
+ flake8, shellcheck, tidy,
  libxml2-utils,
- git-core, mercurial,
+ git-core,
  bzr, bzrtools, bzr-builddeb, bzr-pipeline,
  vim,
  colordiff, patchutils, quilt,
@@ -31,7 +30,6 @@ Depends:
  network-manager-openvpn-gnome, resolvconf, curl,
  chromium-browser,
  pastebinit,
- dconf-editor,
- dmz-cursor-theme
+ dconf-editor
 Description: metapackage for installation of my package selection.
  This installs a whole set of packages that I currently use on Ubuntu desktops.
