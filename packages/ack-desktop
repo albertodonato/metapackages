@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 99
+Version: 101
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -8,7 +8,7 @@ Priority: optional
 Depends:
  emacs-snapshot, emacs-snapshot-el,
  ipython, ipython3, python-ipdb, python3-ipdb,
- virtualenv, python-pip, python3-pip,
+ virtualenv, python-pip, python3-pip, twine,
  jq, python-demjson,
  flake8, shellcheck, tidy,
  libxml2-utils,
@@ -30,6 +30,7 @@ Depends:
  network-manager-openvpn-gnome, resolvconf, curl,
  chromium-browser,
  pastebinit,
- dconf-editor
+ dconf-editor,
+ dmz-cursor-theme
 Description: metapackage for installation of my package selection.
  This installs a whole set of packages that I currently use on Ubuntu desktops.
