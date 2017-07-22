@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 101
+Version: 103
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -31,6 +31,8 @@ Depends:
  chromium-browser,
  pastebinit,
  dconf-editor,
- dmz-cursor-theme
+ gnome-tweak-tool, gnome-backgrounds,
+ dmz-cursor-theme,
+ apt-btrfs-snapshot
 Description: metapackage for installation of my package selection.
  This installs a whole set of packages that I currently use on Ubuntu desktops.
