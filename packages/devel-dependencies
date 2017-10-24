@@ -1,21 +1,24 @@
 Package: devel-dependencies
-Version: 2
-Maintainer: Alberto Donato <alberto.donato@canonical.com>
+Version: 3
+Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
 Section: devel
 Priority: optional
 Depends:
  software-properties-common,
- bash-completion, build-essential, bzr-pipeline,
- ipython,
- ipython3,
+ bash-completion,
+ build-essential,
+ bzr, bzr-pipeline,
+ git,
+ ipython, ipython3,
+ flake8, shellcheck,
  silversearcher-ag,
  tree,
  diffutils, patchutils, colordiff, diffstat,
  wget, curl,
- sshuttle,
  language-pack-en-base, apt-transport-https,
+ sshuttle,
  encfs, libpam-encfs
 Description: metapackage for development environment setup
  Metapackage pulling packages needed for setting up development environment
