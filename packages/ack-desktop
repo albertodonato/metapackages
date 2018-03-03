@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 105
+Version: 107
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -8,7 +8,7 @@ Priority: optional
 Depends:
  emacs-snapshot, emacs-snapshot-el,
  ipython, ipython3, python-ipdb, python3-ipdb,
- virtualenv, python-pip, python3-pip, twine,
+ virtualenv, python-pip, python3-pip, twine, tox,
  jq, python-demjson,
  flake8, shellcheck, tidy,
  libxml2-utils,
@@ -28,6 +28,8 @@ Depends:
  lxd, docker.io,
  python3-openstackclient,
  network-manager-openvpn-gnome, resolvconf, curl,
+ gnome-session,
+ gir1.2-gtop-2.0, gir1.2-networkmanager-1.0,
  chromium-browser,
  pastebinit,
  dconf-editor,
