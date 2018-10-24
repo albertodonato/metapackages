@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 107
+Version: 110
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -10,25 +10,22 @@ Depends:
  ipython, ipython3, python-ipdb, python3-ipdb,
  virtualenv, python-pip, python3-pip, twine, tox,
  jq, python-demjson,
- flake8, shellcheck, tidy,
+ flake8, tidy,
  libxml2-utils,
  git-core,
  bzr, bzrtools, bzr-builddeb, bzr-pipeline,
  vim,
  colordiff, patchutils, quilt,
- silversearcher-ag, tree, htop,
+ silversearcher-ag, tree,
  dh-make, dpatch, equivs, ubuntu-dev-tools,
- golang-go,
  reprepro,
- encfs, libpam-mount, openssh-server, sshuttle,
- synergy,
+ openssh-server,
  tmux, tmuxinator, run-one, xclip,
  mpv, inkscape, gimp, gphoto2,
  qemu-kvm, qemu-efi, ovmf, virt-manager,
  lxd, docker.io,
- python3-openstackclient,
  network-manager-openvpn-gnome, resolvconf, curl,
- gnome-session,
+ gnome-session, chrome-gnome-shell,
  gir1.2-gtop-2.0, gir1.2-networkmanager-1.0,
  chromium-browser,
  pastebinit,

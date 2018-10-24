@@ -1,5 +1,5 @@
 Package: devel-dependencies
-Version: 3
+Version: 4
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -17,8 +17,6 @@ Depends:
  tree,
  diffutils, patchutils, colordiff, diffstat,
  wget, curl,
- language-pack-en-base, apt-transport-https,
- sshuttle,
- encfs, libpam-encfs
+ language-pack-en-base, apt-transport-https
 Description: metapackage for development environment setup
  Metapackage pulling packages needed for setting up development environment
