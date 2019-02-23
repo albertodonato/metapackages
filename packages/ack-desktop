@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 110
+Version: 112
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -23,14 +23,13 @@ Depends:
  tmux, tmuxinator, run-one, xclip,
  mpv, inkscape, gimp, gphoto2,
  qemu-kvm, qemu-efi, ovmf, virt-manager,
- lxd, docker.io,
+ docker.io,
  network-manager-openvpn-gnome, resolvconf, curl,
  gnome-session, chrome-gnome-shell,
  gir1.2-gtop-2.0, gir1.2-networkmanager-1.0,
  chromium-browser,
  pastebinit,
  dconf-editor,
- gnome-tweak-tool, gnome-backgrounds, gnome-clocks,
- apt-btrfs-snapshot
+ gnome-tweak-tool, gnome-backgrounds, gnome-clocks
 Description: metapackage for installation of my package selection.
  This installs a whole set of packages that I currently use on Ubuntu desktops.
