@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 113
+Version: 114
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -13,7 +13,6 @@ Depends:
  flake8, tidy,
  libxml2-utils,
  git-core,
- bzr, bzrtools,
  vim,
  colordiff, patchutils, quilt,
  silversearcher-ag, tree,
