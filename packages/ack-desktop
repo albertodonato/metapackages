@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 112
+Version: 113
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -7,13 +7,13 @@ Section: misc
 Priority: optional
 Depends:
  emacs-snapshot, emacs-snapshot-el,
- ipython, ipython3, python-ipdb, python3-ipdb,
- virtualenv, python-pip, python3-pip, twine, tox,
- jq, python-demjson,
+ ipython3, python3-ipdb,
+ virtualenv, python3-pip, twine, tox,
+ jq,
  flake8, tidy,
  libxml2-utils,
  git-core,
- bzr, bzrtools, bzr-builddeb, bzr-pipeline,
+ bzr, bzrtools,
  vim,
  colordiff, patchutils, quilt,
  silversearcher-ag, tree,
