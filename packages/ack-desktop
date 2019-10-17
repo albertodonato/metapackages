@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 114
+Version: 117
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -29,6 +29,8 @@ Depends:
  chromium-browser,
  pastebinit,
  dconf-editor,
- gnome-tweak-tool, gnome-backgrounds, gnome-clocks
+ gnome-tweak-tool, gnome-backgrounds, gnome-clocks,
+ libnss3-tools, pcsc-tools, opensc-pkcs11,
+ fonts-symbola
 Description: metapackage for installation of my package selection.
  This installs a whole set of packages that I currently use on Ubuntu desktops.
