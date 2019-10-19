@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 117
+Version: 120
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -25,12 +25,12 @@ Depends:
  docker.io,
  network-manager-openvpn-gnome, resolvconf, curl,
  gnome-session, chrome-gnome-shell,
- gir1.2-gtop-2.0, gir1.2-networkmanager-1.0,
  chromium-browser,
  pastebinit,
  dconf-editor,
  gnome-tweak-tool, gnome-backgrounds, gnome-clocks,
  libnss3-tools, pcsc-tools, opensc-pkcs11,
- fonts-symbola
+ fonts-symbola,
+ nextcloud-desktop
 Description: metapackage for installation of my package selection.
  This installs a whole set of packages that I currently use on Ubuntu desktops.
