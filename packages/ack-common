@@ -1,0 +1,24 @@
+Package: ack-common
+Version: 2
+Maintainer: Alberto Donato <alberto.donato@gmail.com>
+Architecture: all
+Component: main
+Section: misc
+Priority: optional
+Depends:
+ curl,
+ ipython3,
+ virtualenv,
+ jq,
+ git-core,
+ vim,
+ silversearcher-ag, tree,
+ reprepro,
+ openssh-server,
+ tmux, tmuxinator, run-one,
+ qemu-kvm, qemu-efi, ovmf, virt-manager,
+ docker.io,
+ pastebinit,
+ wakeonlan
+Description: metapackage for installation of my package selection - common packages
+ This installs a whole set of packages that I currently use on Ubuntu desktops.

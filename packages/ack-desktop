@@ -1,35 +1,25 @@
 Package: ack-desktop
-Version: 121
+Version: 122
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
 Section: misc
 Priority: optional
 Depends:
+ ack-common,
  emacs-snapshot, emacs-snapshot-el,
- ipython3, python3-ipdb,
- virtualenv, python3-pip, twine, tox,
- jq,
- flake8, tidy, golint,
+ python3-ipdb, python3-pip, twine, tox,
+ tidy, golint,
  libxml2-utils,
- git-core,
- vim,
- colordiff, patchutils, quilt,
- silversearcher-ag, tree,
  dh-make, dpatch, equivs, ubuntu-dev-tools,
- reprepro,
- openssh-server,
- tmux, tmuxinator, run-one, xclip,
+ xclip,
  mpv, inkscape, gimp, gphoto2,
  qemu-kvm, qemu-efi, ovmf, virt-manager,
- docker.io,
- network-manager-openvpn-gnome, resolvconf, curl,
+ network-manager-openvpn-gnome, resolvconf,
  gnome-session, chrome-gnome-shell,
- pastebinit,
  dconf-editor,
  gnome-tweak-tool, gnome-backgrounds, gnome-clocks,
  libnss3-tools, pcsc-tools, opensc-pkcs11,
- fonts-symbola,
- nextcloud-desktop
-Description: metapackage for installation of my package selection.
- This installs a whole set of packages that I currently use on Ubuntu desktops.
+ fonts-symbola
+Description: metapackage for installation of my package selection - desktop packages
+ This installs a whole set of packages that I currently use on Ubuntu.
