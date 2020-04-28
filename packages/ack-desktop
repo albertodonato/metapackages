@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 123
+Version: 124
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -15,7 +15,7 @@ Depends:
  xclip,
  mpv, gimp, gphoto2,
  qemu-kvm, qemu-efi, ovmf, virt-manager,
- network-manager-openvpn-gnome, resolvconf,
+ network-manager-openvpn-gnome,
  gnome-session, chrome-gnome-shell,
  dconf-editor,
  gnome-tweak-tool, gnome-backgrounds, gnome-clocks,

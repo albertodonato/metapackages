@@ -1,5 +1,5 @@
 Package: ack-common
-Version: 2
+Version: 3
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -15,7 +15,7 @@ Depends:
  silversearcher-ag, tree,
  reprepro,
  openssh-server,
- tmux, tmuxinator, run-one,
+ tmux, tmuxinator,
  qemu-kvm, qemu-efi, ovmf, virt-manager,
  docker.io,
  pastebinit,
