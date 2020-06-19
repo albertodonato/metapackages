@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 124
+Version: 125
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -13,7 +13,7 @@ Depends:
  libxml2-utils,
  dh-make, dpatch, equivs, ubuntu-dev-tools,
  xclip,
- mpv, gimp, gphoto2,
+ gimp, gphoto2,
  qemu-kvm, qemu-efi, ovmf, virt-manager,
  network-manager-openvpn-gnome,
  gnome-session, chrome-gnome-shell,
@@ -22,4 +22,4 @@ Depends:
  libnss3-tools, pcsc-tools, opensc-pkcs11,
  fonts-symbola
 Description: metapackage for installation of my package selection - desktop packages
- This installs a whole set of packages that I currently use on Ubuntu.
+ This installs a whole s4et of packages that I currently use on Ubuntu.
