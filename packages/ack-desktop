@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 125
+Version: 127
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -15,10 +15,10 @@ Depends:
  xclip,
  gimp, gphoto2,
  qemu-kvm, qemu-efi, ovmf, virt-manager,
+ docker.io,
+ gnome-session, gnome-tweak-tool, gnome-backgrounds, gnome-clocks,
  network-manager-openvpn-gnome,
- gnome-session, chrome-gnome-shell,
  dconf-editor,
- gnome-tweak-tool, gnome-backgrounds, gnome-clocks,
  libnss3-tools, pcsc-tools, opensc-pkcs11,
  fonts-symbola
 Description: metapackage for installation of my package selection - desktop packages
