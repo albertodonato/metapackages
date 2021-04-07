@@ -78,7 +78,7 @@ repo_build() {
 }
 
 repo_copy() {
-    rsync -av "$REPO_DIR" "$RSYNC_SSH_TARGET"
+    rsync -av --delete "$REPO_DIR" "$RSYNC_SSH_TARGET"
 }
 
 repo_list() {

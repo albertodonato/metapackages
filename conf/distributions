@@ -1,5 +1,5 @@
 Codename: unstable
-Architectures: source amd64
+Architectures: source i386 amd64
 Origin: ack-unstable
 Label: Ack's repository
 Components: main
