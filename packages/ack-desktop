@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 130
+Version: 132
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -7,7 +7,6 @@ Section: misc
 Priority: optional
 Depends:
  ack-common,
- emacs-snapshot, emacs-snapshot-el,
  python3-ipdb, twine, tox,
  tidy, golint,
  libxml2-utils,
@@ -23,6 +22,7 @@ Depends:
  dconf-editor,
  libnss3-tools, pcsc-tools, pcscd, opensc-pkcs11, cackey,
  fonts-symbola,
- pipewire
+ pipewire,
+ ledger
 Description: metapackage for installation of my package selection - desktop packages
  This installs a whole s4et of packages that I currently use on Ubuntu.
