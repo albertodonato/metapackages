@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 134
+Version: 135
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -22,6 +22,7 @@ Depends:
  libnss3-tools, pcsc-tools, pcscd, opensc-pkcs11, cackey,
  fonts-symbola,
  pipewire,
- ledger
+ ledger,
+ syncthing
 Description: metapackage for installation of my package selection - desktop packages
  This installs a whole s4et of packages that I currently use on Ubuntu.
