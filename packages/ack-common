@@ -1,5 +1,5 @@
 Package: ack-common
-Version: 4
+Version: 5
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -11,7 +11,7 @@ Depends:
  jq,
  git-core,
  vim,
- silversearcher-ag, tree,
+ ripgrep, tree,
  reprepro,
  openssh-server,
  tmux, tmuxinator,

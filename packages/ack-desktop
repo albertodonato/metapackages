@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 135
+Version: 136
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -13,7 +13,7 @@ Depends:
  dh-make, dpatch, equivs, ubuntu-dev-tools,
  xclip,
  gimp, gphoto2,
- qemu-kvm, qemu-efi, ovmf, virt-manager,
+ qemu-kvm, ovmf, virt-manager,
  gnome-session, gnome-tweaks, gnome-backgrounds,
  gnome-clocks, gnome-weather,
  adwaita-icon-theme-full,
