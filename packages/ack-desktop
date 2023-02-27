@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 138
+Version: 141
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -7,8 +7,7 @@ Section: misc
 Priority: optional
 Depends:
  ack-common,
- python3-ipdb, twine, tox,
- tidy, golint,
+ tidy,
  libxml2-utils,
  dh-make, dpatch, equivs, ubuntu-dev-tools,
  xclip,
@@ -21,7 +20,6 @@ Depends:
  dconf-editor,
  libnss3-tools, pcsc-tools, pcscd, opensc-pkcs11, cackey,
  fonts-symbola,
- pipewire,
  ledger,
  syncthing
 Description: metapackage for installation of my package selection - desktop packages
