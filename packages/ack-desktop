@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 141
+Version: 142
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -9,7 +9,7 @@ Depends:
  ack-common,
  tidy,
  libxml2-utils,
- dh-make, dpatch, equivs, ubuntu-dev-tools,
+ dh-make, equivs, ubuntu-dev-tools,
  xclip,
  gimp, gphoto2,
  qemu-kvm, ovmf, virt-manager,
