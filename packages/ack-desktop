@@ -1,5 +1,5 @@
 Package: ack-desktop
-Version: 142
+Version: 143
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -15,7 +15,7 @@ Depends:
  qemu-kvm, ovmf, virt-manager,
  gnome-session, gnome-tweaks, gnome-backgrounds, gnome-shell-extension-manager,
  gnome-clocks, gnome-weather,
- adwaita-icon-theme-full, fonts-cantarell,
+ adwaita-icon-theme-full, fonts-cantarell, fonts-hack,
  network-manager-openvpn-gnome,
  dconf-editor,
  libnss3-tools, pcsc-tools, pcscd, opensc-pkcs11, cackey,
