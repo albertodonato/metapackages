@@ -1,26 +1,51 @@
 Package: ack-desktop
-Version: 143
+Version: 144
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
 Section: misc
 Priority: optional
 Depends:
- ack-common,
- tidy,
- libxml2-utils,
- dh-make, equivs, ubuntu-dev-tools,
- xclip,
- gimp, gphoto2,
- qemu-kvm, ovmf, virt-manager,
- gnome-session, gnome-tweaks, gnome-backgrounds, gnome-shell-extension-manager,
- gnome-clocks, gnome-weather,
- adwaita-icon-theme-full, fonts-cantarell, fonts-hack,
- network-manager-openvpn-gnome,
+ adwaita-icon-theme-full,
+ cackey,
+ curl,
  dconf-editor,
- libnss3-tools, pcsc-tools, pcscd, opensc-pkcs11, cackey,
+ dh-make,
+ equivs,
+ fonts-cantarell,
+ fonts-hack,
  fonts-symbola,
+ gimp, gphoto2,
+ git-core,
+ gnome-backgrounds,
+ gnome-clocks,
+ gnome-session,
+ gnome-shell-extension-manager,
+ gnome-tweaks,
+ gnome-weather,
+ jq,
  ledger,
- syncthing
-Description: metapackage for installation of my package selection - desktop packages
- This installs a whole s4et of packages that I currently use on Ubuntu.
+ libnss3-tools,
+ libxml2-utils,
+ network-manager-openvpn-gnome,
+ opensc-pkcs11,
+ openssh-server,
+ ovmf,
+ pastebinit,
+ pcsc-tools,
+ pcscd,
+ python3-venv,
+ qemu-kvm,
+ reprepro,
+ ripgrep,
+ syncthing,
+ tidy,
+ tmux,
+ tmuxp,
+ tree,
+ vim,
+ virt-manager,
+ wakeonlan,
+ xclip
+Description: metapackage for Ack's desktop packages
+ This installs a whole set of packages that I currently use on Ubuntu.
