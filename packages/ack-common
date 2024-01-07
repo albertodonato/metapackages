@@ -1,5 +1,5 @@
 Package: ack-common
-Version: 6
+Version: 7
 Maintainer: Alberto Donato <alberto.donato@gmail.com>
 Architecture: all
 Component: main
@@ -14,7 +14,7 @@ Depends:
  python3-venv,
  reprepro,
  ripgrep,
- tmux, tmuxinator,
+ tmux, tmuxp,
  tree,
  vim,
  wakeonlan
