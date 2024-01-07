@@ -8,7 +8,7 @@ RSYNC_SSH_TARGET="do:html/repo/"
 BASE_DIR="$PWD"
 KEYS_DIR="$BASE_DIR/keys"
 PACKAGES_DIR="$BASE_DIR/packages"
-REPO_DIR="$BASE_DIR/ubuntu"
+REPO_DIR="$BASE_DIR/repos/ubuntu"
 
 # variables used by reprepro
 export REPREPRO_CONFIG_DIR="$BASE_DIR/conf"
