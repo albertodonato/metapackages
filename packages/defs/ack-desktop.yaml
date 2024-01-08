@@ -1,0 +1,58 @@
+name: ack-desktop
+version: 144
+maintainer: Alberto Donato <alberto.donato@gmail.com>
+title: metapackage for Ack's desktop packages
+description: This installs a whole set of packages that I currently use on Ubuntu.
+url: https://albertodonato.net/repo
+dependencies:
+  - ubuntu: adwaita-icon-theme-full
+    arch: adwaita-icon-theme
+  - ubuntu: cackey
+  - curl
+  - dconf-editor
+  - ubuntu: dh-make
+  - ubuntu: equivs
+  - ubuntu: fonts-cantarell
+    arch: cantarell-fonts
+  - ubuntu: fonts-hack
+    arch: ttf-hack
+  - ubuntu: fonts-symbola
+  - gimp
+  - ubuntu: git-core
+    arch: git
+  - gnome-backgrounds
+  - gnome-clocks
+  - gnome-session
+  - ubuntu: gnome-shell-extension-manager
+  - gnome-tweaks
+  - gnome-weather
+  - gphoto2
+  - jq
+  - ledger
+  - ubuntu: libnss3-tools
+  - ubuntu: libxml2-utils
+    arch: libxml2
+  - ubuntu: network-manager-openvpn-gnome
+    arch: networkmanager-openvpn
+  - ubuntu: opensc-pkcs11
+    arch: opensc
+  - ubuntu: openssh-server
+    arch: openssh
+  - ubuntu: ovmf
+    arch: edk2-ovmf
+  - pastebinit
+  - pcsc-tools
+  - ubuntu: pcscd
+  - ubuntu: python3-venv
+  - ubuntu: qemu-kvm
+    arch: qemu-user
+  - ubuntu: reprepro
+  - ripgrep
+  - syncthing
+  - tmux
+  - tmuxp
+  - tree
+  - vim
+  - virt-manager
+  - ubuntu: wakeonlan
+  - xclip

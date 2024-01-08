@@ -1,0 +1,10 @@
+Package: ${name}
+Version: ${version}
+Maintainer: ${maintainer}
+Architecture: all
+Component: main
+Section: misc
+Priority: optional
+Depends: ${dependencies}
+Description: ${title}
+ ${description}

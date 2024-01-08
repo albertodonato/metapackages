@@ -1,0 +1,309 @@
+#!/usr/bin/env python3
+
+"Build metapackages and a repository for them"
+
+import argparse
+import os
+import shutil
+import subprocess
+import sys
+from abc import ABC, abstractmethod
+from contextlib import contextmanager
+from pathlib import Path
+from string import Template
+from tempfile import mkdtemp
+from typing import IO, Any, Iterator, Mapping
+
+import yaml
+
+BASE_DIR = Path.cwd()
+CONFS_DIR = BASE_DIR / "configs"
+KEYS_DIR = BASE_DIR / "keys"
+PACKAGES_DIR = BASE_DIR / "packages"
+REPO_DIR = BASE_DIR / "repo"
+
+
+def msg(prefix: str, *msg: str) -> None:
+    print(f"--> {prefix}:", *msg, file=sys.stderr)
+
+
+def get_distro() -> str:
+    data = dict(
+        line.split("=", 1)
+        for line in Path("/etc/os-release").read_text().splitlines()
+    )
+    return data["ID"]
+
+
+def run(
+    cmd: tuple[str, ...],
+    stdin: IO[bytes] | None = None,
+    env: Mapping[str, str] | None = None,
+    cwd: Path | None = None,
+) -> None:
+    msg("RUN", *cmd)
+    process = subprocess.run(
+        cmd,
+        stdin=stdin,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        env=env,
+        cwd=cwd,
+    )
+    if process.returncode != 0:
+        msg("Command failed", *cmd)
+        print("stdout:")
+        for line in process.stdout.splitlines():
+            print(f"| {line.decode()}")
+        print("stderr:")
+        for line in process.stderr.splitlines():
+            print(f"| {line.decode()}")
+        raise SystemExit(1)
+
+
+@contextmanager
+def tempdir(cleanup: bool = True) -> Iterator[Path]:
+    path = Path(mkdtemp())
+    try:
+        yield path
+    except Exception:
+        if cleanup:
+            shutil.rmtree(path)
+        raise
+
+
+class GPG:
+    def __init__(self, work_dir: Path, repo_dir: Path, keys_dir: Path) -> None:
+        self.repo_dir = repo_dir
+        self.keys_dir = keys_dir
+        self.gpg_dir = work_dir / "gnupghome"
+
+    def setup(self) -> None:
+        self.gpg_dir.mkdir()
+        with (self.keys_dir / "seckey.gpg").open("rb") as seckey:
+            run(
+                ("gpg", "--import"),
+                stdin=seckey,
+                env={"GNUPGHOME": str(self.gpg_dir)},
+            )
+        shutil.copy(self.keys_dir / "pubkey.gpg", self.repo_dir)
+
+
+class Repo(ABC):
+    @abstractmethod
+    def setup(self) -> None:
+        ...
+
+    @abstractmethod
+    def build_and_import(self, *packages: Path) -> None:
+        ...
+
+
+class DebRepo(Repo):
+    REPO_SUITE = "unstable"
+
+    def __init__(
+        self, work_dir: Path, repo_dir: Path, config_dir: Path, gpg_dir: Path
+    ) -> None:
+        self.work_dir = work_dir
+        self.repo_dir = repo_dir
+        self.config_dir = config_dir
+        self.gpg_dir = gpg_dir
+        self.base_dir = self.work_dir / "reprepro"
+        self.packages_dir = self.work_dir / "equivs"
+
+    def setup(self) -> None:
+        shutil.rmtree(self.repo_dir, ignore_errors=True)
+        self.repo_dir.mkdir()
+        self.base_dir.mkdir()
+        self.packages_dir.mkdir()
+
+    def reprepro(self, *args: str) -> None:
+        run(
+            ("reprepro", *args),
+            env={
+                "PATH": os.environ["PATH"],
+                "REPREPRO_CONFIG_DIR": str(self.config_dir),
+                "REPREPRO_BASE_DIR": str(self.base_dir),
+                "GNUPGHOME": str(self.gpg_dir),
+            },
+        )
+
+    def build_and_import(self, *packages: Path) -> None:
+        for package in packages:
+            run(("equivs-build", "-f", str(package)), cwd=self.packages_dir)
+            for command, suffix in (
+                ("include", "changes"),
+                ("includedsc", "dsc"),
+            ):
+                for path in self.packages_dir.glob(
+                    f"{package.name}*.{suffix}"
+                ):
+                    self.reprepro(
+                        "--outdir",
+                        str(self.repo_dir),
+                        "-VVV",
+                        command,
+                        self.REPO_SUITE,
+                        str(path),
+                    )
+
+
+class ArchRepo(Repo):
+    REPO_NAME = "personal"
+
+    def __init__(self, work_dir: Path, repo_dir: Path, gpg_dir: Path) -> None:
+        self.work_dir = work_dir
+        self.repo_dir = repo_dir
+        self.gpg_dir = gpg_dir
+        self.base_dir = self.work_dir / "makepkg"
+
+    def setup(self) -> None:
+        shutil.rmtree(self.repo_dir, ignore_errors=True)
+        self.repo_dir.mkdir()
+        self.base_dir.mkdir()
+
+    def makepkg(self, path: Path) -> None:
+        run(
+            ("makepkg",),
+            cwd=path,
+        )
+
+    def repo_add(self) -> None:
+        packages = (str(path) for path in self.repo_dir.glob("*.zst"))
+        run(
+            ("repo-add", "--sign", f"{self.REPO_NAME}.db.tar.gz", *packages),
+            env={"GNUPGHOME": str(self.gpg_dir)},
+            cwd=self.repo_dir,
+        )
+
+    def build_and_import(self, *packages: Path) -> None:
+        for package in packages:
+            pkgbuild = self.base_dir / "PKGBUILD"
+            shutil.copy(package, pkgbuild)
+            self.makepkg(self.base_dir)
+            pkgbuild.unlink()
+            for path in self.base_dir.glob("*.zst"):
+                shutil.copy(path, self.repo_dir)
+                self.repo_add()
+
+
+def get_packages(
+    work_dir: Path, packages_dir: Path, distro: str
+) -> Iterator[Path]:
+    defs_dir = work_dir / "packages"
+    defs_dir.mkdir()
+
+    template = Template(
+        (packages_dir / "templates" / f"{distro}.template").read_text()
+    )
+    for package in (packages_dir / "defs").glob("*.yaml"):
+        path = defs_dir / package.stem
+        msg("PKG", str(path))
+        context = _package_context(package, distro)
+        path.write_text(template.substitute(context))
+        yield path
+
+
+def _package_context(source: Path, distro: str) -> dict[str, Any]:
+    context: dict[str, Any] = yaml.safe_load(source.read_text())
+    deps = []
+    for dep in context.pop("dependencies"):
+        if isinstance(dep, str):
+            deps.append(dep)
+        else:
+            if entry := dep.get(distro):
+                deps.append(entry)
+    deps.sort()
+
+    match distro:
+        case "ubuntu":
+            context["dependencies"] = ", ".join(deps)
+        case "arch":
+            context["dependencies"] = " ".join(deps)
+    return context
+
+
+def build_repo(keep_workdir: bool) -> None:
+    distro = get_distro()
+
+    REPO_DIR.mkdir(exist_ok=True)
+
+    with tempdir(cleanup=not keep_workdir) as work_dir:
+        msg("DIR", str(work_dir))
+        gpg = GPG(work_dir=work_dir, repo_dir=REPO_DIR, keys_dir=KEYS_DIR)
+        gpg.setup()
+
+        repo: Repo
+        match distro:
+            case "ubuntu":
+                repo = DebRepo(
+                    work_dir=work_dir,
+                    repo_dir=REPO_DIR / "ubuntu",
+                    config_dir=CONFS_DIR / "reprepro",
+                    gpg_dir=gpg.gpg_dir,
+                )
+            case "arch":
+                repo = ArchRepo(
+                    work_dir=work_dir,
+                    repo_dir=REPO_DIR / "arch",
+                    gpg_dir=gpg.gpg_dir,
+                )
+            case _:
+                msg("Unsuported distribution", distro)
+                raise SystemExit(1)
+
+        repo.setup()
+        packages = get_packages(work_dir, PACKAGES_DIR, distro)
+        repo.build_and_import(*packages)
+
+
+def copy_repo(host: str, all_distros: bool = False) -> None:
+    distro = get_distro()
+    src = REPO_DIR
+    target = f"{host}:/usr/share/nginx/html/"
+    if not all_distros:
+        src /= distro
+        target += "repo/"
+    run(("rsync", "-av", "--delete", str(src), target))
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    subparsers = parser.add_subparsers(
+        metavar="ACTION", dest="action", help="action to perform"
+    )
+    subparsers.required = True
+
+    build_action = subparsers.add_parser("build", help="build repository")
+    build_action.add_argument(
+        "--keep-workdir",
+        help="keep working directory",
+        action="store_true",
+        default=False,
+    )
+
+    copy_action = subparsers.add_parser("copy", help="copy repository")
+    copy_action.add_argument("rsync_host", help="host to rsync to")
+    copy_action.add_argument(
+        "--all-distros",
+        help="copy all repos, not just the target distro",
+        action="store_true",
+        default=False,
+    )
+
+    return parser.parse_args()
+
+
+def main() -> int:
+    args = parse_args()
+    match args.action:
+        case "build":
+            build_repo(args.keep_workdir)
+        case "copy":
+            copy_repo(args.rsync_host, all_distros=args.all_distros)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
