@@ -80,13 +80,13 @@ class GPG:
 
     def setup(self) -> None:
         self.gpg_dir.mkdir()
-        with (self.keys_dir / "seckey.gpg").open("rb") as seckey:
+        with (self.keys_dir / "seckey.asc").open("rb") as seckey:
             run(
                 ("gpg", "--import"),
                 stdin=seckey,
                 env={"GNUPGHOME": str(self.gpg_dir)},
             )
-        shutil.copy(self.keys_dir / "pubkey.gpg", self.repo_dir)
+        shutil.copy(self.keys_dir / "pubkey.asc", self.repo_dir)
 
 
 class Repo(ABC):
