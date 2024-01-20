@@ -34,6 +34,8 @@ dependencies:
     arch: libxml2
   - ubuntu: network-manager-openvpn-gnome
     arch: networkmanager-openvpn
+  - ubuntu: network-manager-l2tp-gnome
+    arch: networkmanager-l2tp
   - ubuntu: opensc-pkcs11
     arch: opensc
   - ubuntu: openssh-server
