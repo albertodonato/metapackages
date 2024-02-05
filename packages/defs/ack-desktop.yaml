@@ -58,3 +58,4 @@ dependencies:
   - virt-manager
   - ubuntu: wakeonlan
   - xclip
+  - zsh
