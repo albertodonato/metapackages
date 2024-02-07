@@ -23,11 +23,13 @@ PACKAGES_DIR = BASE_DIR / "packages"
 REPO_DIR = BASE_DIR / "repo"
 
 
-def msg(prefix: str, *msg: str) -> None:
-    print(f"--> {prefix}:", *msg, file=sys.stderr)
+def msg(prefix: str, *message: str) -> None:
+    """Print error message to stdout."""
+    print(f"--> {prefix}:", *message, file=sys.stderr)
 
 
 def get_distro() -> str:
+    """Return the running distribution."""
     data = dict(
         line.split("=", 1)
         for line in Path("/etc/os-release").read_text().splitlines()
@@ -40,7 +42,8 @@ def run(
     stdin: IO[bytes] | None = None,
     env: Mapping[str, str] | None = None,
     cwd: Path | None = None,
-) -> None:
+) -> str:
+    """Execute a process and return its stdout."""
     msg("RUN", *cmd)
     process = subprocess.run(
         cmd,
@@ -53,16 +56,18 @@ def run(
     if process.returncode != 0:
         msg("Command failed", *cmd)
         print("stdout:")
-        for line in process.stdout.splitlines():
-            print(f"| {line.decode()}")
+        for line in process.stdout.decode().splitlines():
+            print(f"| {line}")
         print("stderr:")
-        for line in process.stderr.splitlines():
-            print(f"| {line.decode()}")
+        for line in process.stderr.decode().splitlines():
+            print(f"| {line}")
         raise SystemExit(1)
+    return process.stdout.decode()
 
 
 @contextmanager
 def tempdir(cleanup: bool = True) -> Iterator[Path]:
+    """Contextmanager with temporary directory."""
     path = Path(mkdtemp())
     try:
         yield path
@@ -73,6 +78,8 @@ def tempdir(cleanup: bool = True) -> Iterator[Path]:
 
 
 class GPG:
+    """Wrapper for the gpg command."""
+
     def __init__(self, work_dir: Path, repo_dir: Path, keys_dir: Path) -> None:
         self.repo_dir = repo_dir
         self.keys_dir = keys_dir
@@ -90,17 +97,31 @@ class GPG:
 
 
 class Repo(ABC):
-    @abstractmethod
-    def setup(self) -> None:
-        ...
+    REQUIRED_PACKAGES: frozenset[str]
+
+    def missing_packages(self) -> frozenset[str]:
+        return self.REQUIRED_PACKAGES - self.installed_packages()
 
     @abstractmethod
-    def build_and_import(self, *packages: Path) -> None:
-        ...
+    def setup(self) -> None: ...
+
+    @abstractmethod
+    def build_and_import(self, *packages: Path) -> None: ...
+
+    @abstractmethod
+    def installed_packages(self) -> set[str]: ...
 
 
 class DebRepo(Repo):
     REPO_SUITE = "unstable"
+
+    REQUIRED_PACKAGES = frozenset(
+        (
+            "equivs",
+            "gpg",
+            "reprepro",
+        )
+    )
 
     def __init__(
         self, work_dir: Path, repo_dir: Path, config_dir: Path, gpg_dir: Path
@@ -118,7 +139,31 @@ class DebRepo(Repo):
         self.base_dir.mkdir()
         self.packages_dir.mkdir()
 
-    def reprepro(self, *args: str) -> None:
+    def build_and_import(self, *packages: Path) -> None:
+        for package in packages:
+            run(("equivs-build", "-f", str(package)), cwd=self.packages_dir)
+            for command, suffix in (
+                ("include", "changes"),
+                ("includedsc", "dsc"),
+            ):
+                for path in self.packages_dir.glob(f"{package.name}*.{suffix}"):
+                    self._reprepro(
+                        "--outdir",
+                        str(self.repo_dir),
+                        "-VVV",
+                        command,
+                        self.REPO_SUITE,
+                        str(path),
+                    )
+
+    def installed_packages(self) -> set[str]:
+        return set(
+            run(
+                ("dpkg-query", "-W", "-f", "${Package} "),
+            ).split()
+        )
+
+    def _reprepro(self, *args: str) -> None:
         run(
             ("reprepro", *args),
             env={
@@ -129,28 +174,17 @@ class DebRepo(Repo):
             },
         )
 
-    def build_and_import(self, *packages: Path) -> None:
-        for package in packages:
-            run(("equivs-build", "-f", str(package)), cwd=self.packages_dir)
-            for command, suffix in (
-                ("include", "changes"),
-                ("includedsc", "dsc"),
-            ):
-                for path in self.packages_dir.glob(
-                    f"{package.name}*.{suffix}"
-                ):
-                    self.reprepro(
-                        "--outdir",
-                        str(self.repo_dir),
-                        "-VVV",
-                        command,
-                        self.REPO_SUITE,
-                        str(path),
-                    )
-
 
 class ArchRepo(Repo):
     REPO_NAME = "personal"
+
+    REQUIRED_PACKAGES = frozenset(
+        (
+            "binutils",
+            "fakeroot",
+            "gnupg",
+        )
+    )
 
     def __init__(self, work_dir: Path, repo_dir: Path, gpg_dir: Path) -> None:
         self.work_dir = work_dir
@@ -163,29 +197,34 @@ class ArchRepo(Repo):
         self.repo_dir.mkdir()
         self.base_dir.mkdir()
 
-    def makepkg(self, path: Path) -> None:
+    def build_and_import(self, *packages: Path) -> None:
+        for package in packages:
+            pkgbuild = self.base_dir / "PKGBUILD"
+            shutil.copy(package, pkgbuild)
+            self._makepkg(self.base_dir)
+            pkgbuild.unlink()
+            for path in self.base_dir.glob("*.zst"):
+                shutil.copy(path, self.repo_dir)
+                self._repo_add()
+
+    def installed_packages(self) -> set[str]:
+        return set(
+            line.split(" ")[0] for line in run(("pacman", "-Q")).splitlines()
+        )
+
+    def _makepkg(self, path: Path) -> None:
         run(
             ("makepkg",),
             cwd=path,
         )
 
-    def repo_add(self) -> None:
+    def _repo_add(self) -> None:
         packages = (str(path) for path in self.repo_dir.glob("*.zst"))
         run(
             ("repo-add", "--sign", f"{self.REPO_NAME}.db.tar.gz", *packages),
             env={"GNUPGHOME": str(self.gpg_dir)},
             cwd=self.repo_dir,
         )
-
-    def build_and_import(self, *packages: Path) -> None:
-        for package in packages:
-            pkgbuild = self.base_dir / "PKGBUILD"
-            shutil.copy(package, pkgbuild)
-            self.makepkg(self.base_dir)
-            pkgbuild.unlink()
-            for path in self.base_dir.glob("*.zst"):
-                shutil.copy(path, self.repo_dir)
-                self.repo_add()
 
 
 def get_packages(
@@ -252,6 +291,12 @@ def build_repo(keep_workdir: bool) -> None:
             case _:
                 msg("Unsuported distribution", distro)
                 raise SystemExit(1)
+
+        if missing_packages := repo.missing_packages():
+            msg(
+                "Missing required packages", ", ".join(sorted(missing_packages))
+            )
+            raise SystemExit(1)
 
         repo.setup()
         packages = get_packages(work_dir, PACKAGES_DIR, distro)
