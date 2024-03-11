@@ -8,10 +8,15 @@ dependencies:
   - ubuntu: adwaita-icon-theme-full
     arch: adwaita-icon-theme
   - ubuntu: cackey
+  - arch: chromium
   - curl
   - dconf-editor
   - ubuntu: dh-make
+  - arch: docker
+  - arch: docker-buildx
   - ubuntu: equivs
+  - arch: emacs
+  - arch: firefox
   - ubuntu: fonts-cantarell
     arch: cantarell-fonts
   - ubuntu: fonts-hack
@@ -26,7 +31,11 @@ dependencies:
   - ubuntu: gnome-shell-extension-manager
   - gnome-tweaks
   - gnome-weather
+  - arch: go
+  - arch: gopls
   - gphoto2
+  - arch: httpie
+  - arch: incus
   - jq
   - ledger
   - ubuntu: libnss3-tools
@@ -50,6 +59,7 @@ dependencies:
     arch: qemu-user
   - ubuntu: reprepro
   - ripgrep
+  - arch: signal-desktop
   - syncthing
   - tmux
   - tmuxp
