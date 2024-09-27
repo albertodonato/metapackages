@@ -93,7 +93,7 @@ class GPG:
                 stdin=seckey,
                 env={"GNUPGHOME": str(self.gpg_dir)},
             )
-        shutil.copy(self.keys_dir / "pubkey.asc", self.repo_dir)
+        shutil.copy(self.keys_dir / "pubkey.asc", self.repo_dir / "keyring.gpg")
 
 
 class Repo(ABC):
