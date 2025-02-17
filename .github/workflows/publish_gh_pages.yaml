@@ -47,12 +47,14 @@ jobs:
           image: archlinux
           options: -v ${{ github.workspace }}:/work
           run: |
+            sudo pacman -Syu
+            sudo pacman -S python-pip
+
             cd /work
 
             python -m venv ve
             ve/bin/pip install -r requirements.txt
 
-            sudo pacman -Syu
             sudo pacman -S $(ve/bin/python ./repository deps)
 
             ve/bin/python ./repository build
