@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Package repositories</title>
+    <style type="text/css">
+      html {
+          color-scheme: light dark;
+      }
+      body {
+          width: 35em;
+          margin: 5em auto;
+          font-family: Tahoma, Verdana, Arial, sans-serif;
+          font-size: 18px;
+      }
+      pre, code {
+          font-size: 90%;
+          /* font-weight: bold; */
+      }
+      ol {
+          margin: 1em 0;
+          list-type-type: decimal;
+      }
+      .em {
+          padding: 2em 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Package repositories</h1>
+    <p>This site contains package repositories for Linux-based distributions.</p>
+
+    <h2>Ubuntu</h2>
+
+    Steps to set up the repository:
+
+    <ol>
+      <li>
+        Fetch the public key with
+
+        <pre>
+curl -o /etc/apt/keyrings/repo.albertodonato.net.asc \
+https://repo.albertodonato.net/keyring.asc
+        </pre>
+      </li>
+
+      <li>
+        Create a <code>/etc/apt/sources.list.d/albertodonato.net.sources</code>
+        file with the following content:
+
+        <pre>
+Enabled: yes
+Types: deb
+URIs: https://repo.albertodonato.net/ubuntu
+Suites: unstable
+Components: main
+Architectures: amd64
+Signed-By: /etc/apt/keyrings/repo.albertodonato.net.asc
+        </pre>
+      </li>
+    </ol>
+
+    <p class="em">
+      <em>
+        See the
+        source <a href="http://github.com/albertodonato/metapackages">GitHub
+        repository</a> for details.
+      </em>
+    </p>
+  </body>
+</html>
