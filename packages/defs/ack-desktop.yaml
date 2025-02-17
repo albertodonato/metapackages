@@ -3,7 +3,7 @@ version: 144
 maintainer: Alberto Donato <alberto.donato@gmail.com>
 title: metapackage for Ack's desktop packages
 description: This installs a whole set of packages that I currently use.
-url: https://albertodonato.net/repo
+url: https://repo.albertodonato.net
 dependencies:
   - ubuntu: adwaita-icon-theme-full
     arch: adwaita-icon-theme

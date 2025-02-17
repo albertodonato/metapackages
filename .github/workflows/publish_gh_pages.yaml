@@ -35,7 +35,7 @@ jobs:
         env:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
         run: |
-           base64 -d <<<"$SECRET_KEY" > keys/seckey.pgp
+           base64 -d <<<"$SECRET_KEY" > repo.key
 
       - name: Build repository
         run: |
