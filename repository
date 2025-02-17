@@ -307,6 +307,7 @@ def build_repo(keep_workdir: bool) -> None:
 
 def _add_static_files(work_dir: Path) -> None:
     for path in STATIC_DIR.iterdir():
+        msg("CPY", path)
         shutil.copy(path, work_dir)
 
 
