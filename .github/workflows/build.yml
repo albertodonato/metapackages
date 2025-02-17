@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  lint:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Repository checkout
@@ -23,8 +23,8 @@ jobs:
 
       - name: Install packages
         run: |
-          apt update
-          apt install -y $(python ./repository deps)
+          sudo apt update
+          sudo apt install -y $(python ./repository deps)
 
       - name: Get signing key
         env:
