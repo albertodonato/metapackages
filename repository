@@ -31,8 +31,7 @@ def msg(prefix: str, *message: str) -> None:
 def get_distro() -> str:
     """Return the running distribution."""
     data = dict(
-        line.split("=", 1)
-        for line in Path("/etc/os-release").read_text().splitlines()
+        line.split("=", 1) for line in Path("/etc/os-release").read_text().splitlines()
     )
     return data["ID"]
 
@@ -208,9 +207,7 @@ class ArchRepo(Repo):
                 self._repo_add()
 
     def installed_packages(self) -> set[str]:
-        return set(
-            line.split(" ")[0] for line in run(("pacman", "-Q")).splitlines()
-        )
+        return set(line.split(" ")[0] for line in run(("pacman", "-Q")).splitlines())
 
     def _makepkg(self, path: Path) -> None:
         run(
@@ -227,15 +224,17 @@ class ArchRepo(Repo):
         )
 
 
-def get_packages(
-    work_dir: Path, packages_dir: Path, distro: str
-) -> Iterator[Path]:
+DISTRO_REPOS = {
+    "ubuntu": DebRepo,
+    "arch": ArchRepo,
+}
+
+
+def get_packages(work_dir: Path, packages_dir: Path, distro: str) -> Iterator[Path]:
     defs_dir = work_dir / "packages"
     defs_dir.mkdir()
 
-    template = Template(
-        (packages_dir / "templates" / f"{distro}.template").read_text()
-    )
+    template = Template((packages_dir / "templates" / f"{distro}.template").read_text())
     for package in (packages_dir / "defs").glob("*.yaml"):
         path = defs_dir / package.stem
         msg("PKG", str(path))
@@ -261,6 +260,12 @@ def _package_context(source: Path, distro: str) -> dict[str, Any]:
         case "arch":
             context["dependencies"] = " ".join(deps)
     return context
+
+
+def print_deps() -> None:
+    distro = get_distro()
+    for dep in sorted(DISTRO_REPOS[distro].REQUIRED_PACKAGES):
+        print(dep)
 
 
 def build_repo(keep_workdir: bool) -> None:
@@ -293,9 +298,7 @@ def build_repo(keep_workdir: bool) -> None:
                 raise SystemExit(1)
 
         if missing_packages := repo.missing_packages():
-            msg(
-                "Missing required packages", ", ".join(sorted(missing_packages))
-            )
+            msg("Missing required packages", ", ".join(sorted(missing_packages)))
             raise SystemExit(1)
 
         repo.setup()
@@ -322,6 +325,12 @@ def parse_args() -> argparse.Namespace:
         metavar="ACTION", dest="action", help="action to perform"
     )
     subparsers.required = True
+
+    subparsers.add_parser(
+        "deps",
+        help="print out dependencies for the target distro",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
 
     build_action = subparsers.add_parser(
         "build",
@@ -359,12 +368,12 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     match args.action:
+        case "deps":
+            print_deps()
         case "build":
             build_repo(args.keep_workdir)
         case "copy":
-            copy_repo(
-                args.rsync_host, args.repo_path, all_distros=args.all_distros
-            )
+            copy_repo(args.rsync_host, args.repo_path, all_distros=args.all_distros)
     return 0
 
 
