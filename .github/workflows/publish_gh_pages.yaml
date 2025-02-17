@@ -37,9 +37,25 @@ jobs:
         run: |
            base64 -d <<<"$SECRET_KEY" > repo.key
 
-      - name: Build repository
+      - name: Build Ubuntu repository
         run: |
           python ./repository build
+
+      - name: Build Arch repository
+        uses: addnab/docker-run-action@v3
+        with:
+          image: archlinux
+          options: -v ${{ github.workspace }}:/work
+          run: |
+            cd /work
+
+            python -m venv ve
+            ve/bin/pip install -r requirements.txt
+
+            sudo pacman -Syu
+            sudo pacman -S $(ve/bin/python ./repository deps)
+
+            ve/bin/python ./repository build
 
       - name: Upload repository as artifact
         id: deployment
