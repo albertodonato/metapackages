@@ -41,32 +41,6 @@ jobs:
         run: |
           python ./repository build
 
-      - name: Build Arch repository
-        uses: addnab/docker-run-action@v3
-        with:
-          image: archlinux
-          options: -v ${{ github.workspace }}:/work
-          run: |
-            set -e
-
-            pacman --noconfirm -Syu
-            pacman --noconfirm -S sudo python-pip
-
-            cd /work
-
-            sudo -u nobody python -m venv ve/
-            sudo -u nobody ve/bin/pip install -r requirements.txt
-
-            pacman --noconfirm -S $(sudo -u nobody ve/bin/python ./repository deps)
-
-            sudo -u nobody ve/bin/python ./repository build
-
-      - name: Upload repository as artifact
-        id: deployment
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: repo
-
   deploy:
     runs-on: ubuntu-latest
     environment:
