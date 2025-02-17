@@ -57,7 +57,7 @@ jobs:
             sudo -u nobody python -m venv ve/
             sudo -u nobody ve/bin/pip install -r requirements.txt
 
-            pacman --noconfirm -S $(ve/bin/python ./repository deps)
+            pacman --noconfirm -S $(sudo -u nobody ve/bin/python ./repository deps)
 
             sudo -u nobody ve/bin/python ./repository build
 
