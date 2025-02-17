@@ -49,7 +49,7 @@ jobs:
           run: |
             set -e
 
-            pacman -Syu
+            pacman --noconfirm -Syu
             pacman --noconfirm -S sudo python-pip
 
             cd /work
