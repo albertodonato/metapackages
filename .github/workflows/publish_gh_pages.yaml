@@ -48,16 +48,16 @@ jobs:
           options: -v ${{ github.workspace }}:/work
           run: |
             pacman -Syu
-            pacman --noconfirm -S python-pip
+            pacman --noconfirm -S sudo python-pip
 
             cd /work
 
             python -m venv ve
-            ve/bin/pip install -r requirements.txt
+            sudo -u nobody ve/bin/pip install -r requirements.txt
 
             pacman --noconfirm -S $(ve/bin/python ./repository deps)
 
-            ve/bin/python ./repository build
+            sudo -u nobody ve/bin/python ./repository build
 
       - name: Upload repository as artifact
         id: deployment
