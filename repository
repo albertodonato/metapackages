@@ -302,13 +302,14 @@ def build_repo(keep_workdir: bool) -> None:
         repo.setup()
         packages = get_packages(work_dir, PACKAGES_DIR, distro)
         repo.build_and_import(*packages)
-        _add_static_files(work_dir)
+
+    _add_static_files(REPO_DIR)
 
 
-def _add_static_files(work_dir: Path) -> None:
+def _add_static_files(target_dir: Path) -> None:
     for path in STATIC_DIR.iterdir():
-        msg("CPY", path, work_dir)
-        shutil.copy(path, work_dir)
+        msg("CPY", path, target_dir)
+        shutil.copy(path, target_dir)
 
 
 def copy_repo(host: str, repo_path: str, all_distros: bool = False) -> None:
