@@ -306,7 +306,7 @@ def build_repo(keep_workdir: bool) -> None:
 
 
 def _add_static_files(work_dir: Path) -> None:
-    for path in work_dir.iterdir():
+    for path in STATIC_DIR.iterdir():
         shutil.copy(path, work_dir)
 
 
