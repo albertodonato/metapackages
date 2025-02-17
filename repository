@@ -86,7 +86,7 @@ class GPG:
 
     def setup(self) -> None:
         self.gpg_dir.mkdir()
-        with (self.keys_dir / "seckey.asc").open("rb") as seckey:
+        with (self.keys_dir / "seckey.pgp").open("rb") as seckey:
             run(
                 ("gpg", "--import"),
                 stdin=seckey,

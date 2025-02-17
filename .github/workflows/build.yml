@@ -1,0 +1,43 @@
+name: build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Install packages
+        run: |
+          apt update
+          apt install -y $(python ./repository deps)
+
+      - name: Get signing key
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        run: |
+           base64 -d <<<"$SECRET_KEY" > keys/seckey.pgp
+
+      - name: Build repository
+        run: |
+          python ./repository build
+
+      - name: Upload repository as artifact
+        id: deployment
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: repo
