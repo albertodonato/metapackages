@@ -36,6 +36,12 @@ jobs:
         run: |
           python ./repository build
 
+      - name: Upload repository as artifact
+        id: deployment
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: repo
+
   deploy:
     runs-on: ubuntu-latest
     needs: build
