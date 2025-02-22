@@ -1,4 +1,4 @@
-# Build repository with metapackages
+# Repository with metapackages
 
 This builds metapackages to automatically install all desired dependencies on a
 Linux distribution.
