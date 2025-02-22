@@ -1,11 +1,15 @@
-Script to build ditribution metapackages and a repository for them
-==================================================================
+# Build repository with metapackages
 
 This builds metapackages to automatically install all desired dependencies on a
 Linux distribution.
 
+Supported distributions:
 
-Dependencies
+- Arch Linux
+- Ubuntu
+
+
+## Dependencies
 ------------
 
 Python dependencies for the script can be installed via
@@ -15,8 +19,7 @@ pip install -r requirements.txt
 ```
 
 
-Build
------
+## Build
 
 Packages and repository are built via
 
@@ -25,5 +28,3 @@ Packages and repository are built via
 ```
 
 Result is in the `repo/<distro>` directory.
-
-Currently supported distributions (autodetected) are *Ubuntu* and *Arch Linux*.
