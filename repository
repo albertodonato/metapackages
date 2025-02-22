@@ -312,16 +312,6 @@ def _add_static_files(target_dir: Path) -> None:
         shutil.copy(path, target_dir)
 
 
-def copy_repo(host: str, repo_path: str, all_distros: bool = False) -> None:
-    distro = get_distro()
-    src = REPO_DIR
-    target = f"{host}:{repo_path}"
-    if not all_distros:
-        src /= distro
-        target += "repo/"
-    run(("rsync", "-av", "--delete", str(src), target))
-
-
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=__doc__,
@@ -350,24 +340,6 @@ def parse_args() -> argparse.Namespace:
         default=False,
     )
 
-    copy_action = subparsers.add_parser(
-        "copy",
-        help="copy repository",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-    )
-    copy_action.add_argument("rsync_host", help="host to rsync to")
-    copy_action.add_argument(
-        "--all-distros",
-        help="copy all repos, not just the target distro",
-        action="store_true",
-        default=False,
-    )
-    copy_action.add_argument(
-        "--repo-path",
-        help="base path for repository hosting",
-        default="/usr/share/nginx/html/",
-    )
-
     return parser.parse_args()
 
 
@@ -378,8 +350,6 @@ def main() -> int:
             print_deps()
         case "build":
             build_repo(args.keep_workdir)
-        case "copy":
-            copy_repo(args.rsync_host, args.repo_path, all_distros=args.all_distros)
     return 0
 
 

@@ -27,16 +27,3 @@ Packages and repository are built via
 Result is in the `repo/<distro>` directory.
 
 Currently supported distributions (autodetected) are *Ubuntu* and *Arch Linux*.
-
-
-Copy
-----
-
-The resulting repository is copied via `rsync` via:
-
-```bash
-./repository copy <host>
-```
-
-SSH configuration for the host needs to be set up. By default, the repo is
-copied under the Nginx root directory.
