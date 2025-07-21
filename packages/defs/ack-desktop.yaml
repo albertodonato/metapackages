@@ -60,6 +60,7 @@ dependencies:
   - ubuntu: reprepro
   - ripgrep
   - arch: signal-desktop
+  - stow
   - syncthing
   - tmux
   - tmuxp
