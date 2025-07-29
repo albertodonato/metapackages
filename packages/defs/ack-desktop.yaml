@@ -1,7 +1,7 @@
 name: ack-desktop
-version: 144
-maintainer: Alberto Donato <alberto.donato@gmail.com>
-title: metapackage for Ack's desktop packages
+version: 145
+maintainer: Alberto Donato <alberto@albertodonato.net>
+title: metapackage for dependencies on a desktop machine
 description: This installs a whole set of packages that I currently use.
 url: https://repo.albertodonato.net
 dependencies:
@@ -21,6 +21,7 @@ dependencies:
     arch: cantarell-fonts
   - ubuntu: fonts-hack
     arch: ttf-hack
+  - ubuntu: fonts-powerline
   - ubuntu: fonts-symbola
   - gimp
   - ubuntu: git-core
@@ -45,6 +46,8 @@ dependencies:
     arch: networkmanager-openvpn
   - ubuntu: network-manager-l2tp-gnome
     arch: networkmanager-l2tp
+  - ubuntu: nix-bin
+  - ubuntu: nix-setup-systemd
   - ubuntu: opensc-pkcs11
     arch: opensc
   - ubuntu: openssh-server
