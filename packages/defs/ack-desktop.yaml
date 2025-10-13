@@ -1,6 +1,6 @@
 name: ack-desktop
-version: 145
-maintainer: Alberto Donato <alberto@albertodonato.net>
+version: 146
+maintainer: Alberto Donato <packages@albertodonato.net>
 title: metapackage for dependencies on a desktop machine
 description: This installs a whole set of packages that I currently use.
 url: https://repo.albertodonato.net
@@ -8,15 +8,12 @@ dependencies:
   - ubuntu: adwaita-icon-theme-full
     arch: adwaita-icon-theme
   - ubuntu: cackey
-  - arch: chromium
   - curl
   - dconf-editor
   - ubuntu: dh-make
   - arch: docker
   - arch: docker-buildx
   - ubuntu: equivs
-  - arch: emacs
-  - arch: firefox
   - ubuntu: fonts-cantarell
     arch: cantarell-fonts
   - ubuntu: fonts-hack
@@ -35,41 +32,29 @@ dependencies:
   - arch: go
   - arch: gopls
   - gphoto2
-  - arch: httpie
-  - arch: incus
   - jq
-  - ledger
   - ubuntu: libnss3-tools
   - ubuntu: libxml2-utils
     arch: libxml2
   - ubuntu: network-manager-openvpn-gnome
     arch: networkmanager-openvpn
-  - ubuntu: network-manager-l2tp-gnome
-    arch: networkmanager-l2tp
   - ubuntu: nix-bin
   - ubuntu: nix-setup-systemd
-  - ubuntu: opensc-pkcs11
-    arch: opensc
   - ubuntu: openssh-server
     arch: openssh
   - ubuntu: ovmf
     arch: edk2-ovmf
   - pastebinit
-  - pcsc-tools
-  - ubuntu: pcscd
   - ubuntu: python3-venv
   - ubuntu: qemu-kvm
     arch: qemu-user
   - ubuntu: reprepro
   - ripgrep
-  - arch: signal-desktop
   - stow
-  - syncthing
   - tmux
   - tmuxp
   - tree
   - vim
   - virt-manager
-  - ubuntu: wakeonlan
   - xclip
   - zsh
