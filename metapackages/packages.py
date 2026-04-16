@@ -30,13 +30,18 @@ class Package(BaseModel):
     title: str
     description: str
     url: str
-    dependencies: list[str]
+    dependencies: str
 
     @classmethod
     def from_definition(
-        cls, definition: PackageDefinition, distro: str
+        cls,
+        definition: PackageDefinition,
+        distro: Distribution,
     ) -> Self | None:
-        if definition.distributions and distro not in definition.distributions:
+        if (
+            definition.distributions
+            and distro.name not in definition.distributions
+        ):
             return None
 
         deps = cls._distro_dependencies(definition.dependencies, distro)
@@ -49,17 +54,19 @@ class Package(BaseModel):
 
     @classmethod
     def _distro_dependencies(
-        cls, dependencies: Dependencies, distro: str
-    ) -> list[str]:
+        cls,
+        dependencies: Dependencies,
+        distro: Distribution,
+    ) -> str:
         deps: set[str] = set()
         for dep in dependencies:
             if isinstance(dep, str):
                 deps.add(dep)
             else:
-                if entry := dep.get(distro):
+                if entry := dep.get(distro.name):
                     deps.add(entry)
 
-        return sorted(deps)
+        return distro.dependencies_expr(sorted(deps))
 
 
 def write_packages(
@@ -76,7 +83,7 @@ def write_packages(
 
         content = yaml.safe_load(package_def.read_text())
         definition = PackageDefinition.model_validate(content)
-        package = Package.from_definition(definition, distro.name)
+        package = Package.from_definition(definition, distro)
         if not package:
             msg("PKG[SKIP]", str(path))
             continue

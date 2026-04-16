@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from collections.abc import Sequence
 from pathlib import Path
 from typing import Any, ClassVar, Self
 
@@ -33,7 +34,7 @@ class Distribution(ABC):
     def installed_packages(self) -> set[str]: ...
 
     @abstractmethod
-    def dependency_list(self, packages: list[str]) -> str: ...
+    def dependencies_expr(self, packages: Sequence[str]) -> str: ...
 
 
 def get_distribution() -> Distribution:
@@ -63,7 +64,7 @@ class DebDistribution(Distribution):
             ).split()
         )
 
-    def dependency_list(self, packages: list[str]) -> str:
+    def dependencies_expr(self, packages: Sequence[str]) -> str:
         return ", ".join(packages)
 
 
@@ -83,5 +84,5 @@ class ArchDistribution(Distribution):
             line.split(" ")[0] for line in run(("pacman", "-Q")).splitlines()
         }
 
-    def dependency_list(self, packages: list[str]) -> str:
+    def dependencies_expr(self, packages: Sequence[str]) -> str:
         return " ".join(packages)

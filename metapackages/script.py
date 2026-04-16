@@ -38,7 +38,7 @@ def packages() -> None:
         definition = PackageDefinition.model_validate(
             yaml.safe_load(path.read_text())
         )
-        package = Package.from_definition(definition, distro.name)
+        package = Package.from_definition(definition, distro)
         if package:
             result[package.name] = package.model_dump(exclude={"name"})
     click.echo(yaml.dump(result, default_flow_style=False), nl=False)
