@@ -1,0 +1,42 @@
+name: ack-desktop-work
+version: 1
+maintainer: Alberto Donato <packages@albertodonato.net>
+title: metapackage for dependencies on a desktop machine for work
+description: Whole set of packages for a desktop for work.
+url: https://repo.albertodonato.net
+distributions:
+  - ubuntu
+dependencies:
+  - adwaita-icon-theme-full
+  - cackey
+  - curl
+  - dconf-editor
+  - equivs
+  - fonts-cantarell
+  - fonts-hack
+  - fonts-powerline
+  - fonts-symbola
+  - gimp
+  - git-core
+  - gnome-backgrounds
+  - gnome-clocks
+  - gnome-session
+  - gnome-shell-extension-manager
+  - gnome-tweaks
+  - gnome-weather
+  - jq
+  - libnss3-tools
+  - libxml2-utils
+  - nix-bin
+  - nix-setup-systemd
+  - openssh-server
+  - python3-venv
+  - reprepro
+  - ripgrep
+  - stow
+  - tmux
+  - tmuxp
+  - tree
+  - vim
+  - xclip
+  - zsh
