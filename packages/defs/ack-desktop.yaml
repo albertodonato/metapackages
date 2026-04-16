@@ -5,8 +5,7 @@ title: metapackage for dependencies on a desktop machine
 description: Whole set of packages for a desktop.
 url: https://repo.albertodonato.net
 dependencies:
-  - ubuntu: adwaita-icon-theme-full
-    arch: adwaita-icon-theme
+  - adwaita-icon-theme
   - ubuntu: cackey
   - curl
   - dconf-editor

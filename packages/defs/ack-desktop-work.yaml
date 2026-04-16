@@ -7,7 +7,7 @@ url: https://repo.albertodonato.net
 distributions:
   - ubuntu
 dependencies:
-  - adwaita-icon-theme-full
+  - adwaita-icon-theme
   - cackey
   - curl
   - dconf-editor
