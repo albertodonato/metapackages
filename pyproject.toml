@@ -73,7 +73,7 @@ env_list = [ "lint", "check" ]
 
 [tool.tox.env.check]
 dependency_groups = [ "dev" ]
-commands = [ [ "ty", "check", "repository.py", { replace = "posargs", default = [], extend = true } ] ]
+commands = [ [ "ty", "check", "repository.py" ] ]
 
 [tool.tox.env.lint]
 package = "skip"
