@@ -1,8 +1,7 @@
 from collections.abc import Iterator
+from pathlib import Path
 from string import Template
 from typing import Any
-from pathlib import Path
-import shutil
 
 import yaml
 
@@ -40,5 +39,3 @@ def _package_context(source: Path, distro: Distribution) -> dict[str, Any]:
 
     context["dependencies"] = distro.dependency_list(sorted(deps))
     return context
-
-
