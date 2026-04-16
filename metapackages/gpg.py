@@ -1,7 +1,8 @@
-from pathlib import Path
 import os
+from pathlib import Path
 
 from .utils import run
+
 
 class GPG:
     """Wrapper for the gpg command."""
@@ -21,5 +22,3 @@ class GPG:
                     "GNUPGHOME": str(self.gpg_dir),
                 },
             )
-
-

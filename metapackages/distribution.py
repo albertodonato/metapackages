@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import Any, ClassVar, Self
 from pathlib import Path
-
-from .repository import Repo, ArchRepo, DebRepo
-from .utils import run
+from typing import Any, ClassVar, Self
 
 import click
+
+from .repository import ArchRepo, DebRepo, Repo
+from .utils import run
 
 
 class Distribution(ABC):
@@ -85,5 +85,3 @@ class ArchDistribution(Distribution):
 
     def dependency_list(self, packages: list[str]) -> str:
         return " ".join(packages)
-
-

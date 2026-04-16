@@ -1,14 +1,17 @@
-from typing import IO, Any
-from collections.abc import Mapping
-import subprocess
+from collections.abc import Iterator, Mapping
+from contextlib import contextmanager
 from pathlib import Path
+from shutil import rmtree
+import subprocess
+from tempfile import mkdtemp
+from typing import IO, Any
 
 import click
+
 
 def msg(prefix: str, *message: Any) -> None:
     """Print a message to stderr."""
     click.echo(f"--> {prefix}: {' '.join(str(m) for m in message)}", err=True)
-
 
 
 def run(
@@ -37,3 +40,13 @@ def run(
     return process.stdout.decode()
 
 
+@contextmanager
+def tempdir(cleanup: bool = True) -> Iterator[Path]:
+    """Contextmanager with temporary directory."""
+    path = Path(mkdtemp())
+    try:
+        yield path
+    except Exception:
+        if cleanup:
+            rmtree(path)
+        raise
