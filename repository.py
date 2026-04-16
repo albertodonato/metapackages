@@ -1,20 +1,19 @@
-#!/usr/bin/env python3
+"""Build metapackages and a repository for them."""
 
-"Build metapackages and a repository for them"
-
-import argparse
-import os
-import shutil
-import subprocess
-import sys
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
+import os
 from pathlib import Path
+import shutil
 from string import Template
+import subprocess
 from tempfile import mkdtemp
 import typing as t
 
+import click
 import yaml
+
+__version__ = "0.0.1"
 
 BASE_DIR = Path.cwd()
 STATIC_DIR = BASE_DIR / "static"
@@ -23,15 +22,83 @@ PACKAGES_DIR = BASE_DIR / "packages"
 REPO_DIR = BASE_DIR / "repo"
 
 
+@click.group()
+def main() -> None:
+    """Build distribution metapackages and a repository for them."""
+
+
+@main.command()
+def deps() -> None:
+    """Print out dependencies for the target distribution"""
+    distro = get_distro()
+    try:
+        packages = DISTRO_REPOS[distro].REQUIRED_PACKAGES
+    except KeyError:
+        raise click.ClickException(f"Unsupported distribution: {distro}")
+
+    for dep in sorted(packages):
+        print(dep)
+
+
+@main.command()
+@click.option(
+    "--keep-workdir",
+    is_flag=True,
+    default=False,
+    help="Keep working directory",
+)
+def build(keep_workdir: bool) -> None:
+    """Build repository"""
+    distro = get_distro()
+
+    REPO_DIR.mkdir(exist_ok=True)
+
+    with tempdir(cleanup=not keep_workdir) as work_dir:
+        msg("DIR", str(work_dir))
+        gpg = GPG(work_dir=work_dir, secret_key=Path("repo.key"))
+        gpg.setup()
+
+        repo: Repo
+        match distro:
+            case "ubuntu":
+                repo = DebRepo(
+                    work_dir=work_dir,
+                    repo_dir=REPO_DIR / "ubuntu",
+                    config_dir=CONFS_DIR / "reprepro",
+                    gpg_dir=gpg.gpg_dir,
+                )
+            case "arch":
+                repo = ArchRepo(
+                    work_dir=work_dir,
+                    repo_dir=REPO_DIR / "arch",
+                    gpg_dir=gpg.gpg_dir,
+                )
+            case _:
+                raise click.ClickException(
+                    f"Unsupported distribution: {distro}"
+                )
+
+        if missing_packages := repo.missing_packages():
+            raise click.ClickException(
+                f"Missing required packages: {', '.join(sorted(missing_packages))}"
+            )
+
+        repo.setup()
+        packages = get_packages(work_dir, PACKAGES_DIR, distro)
+        repo.build_and_import(*packages)
+
+    _add_static_files(REPO_DIR)
+
+
 def msg(prefix: str, *message: t.Any) -> None:
-    """Print error message to stdout."""
-    print(f"--> {prefix}:", *message, file=sys.stderr)
+    click.echo(f"--> {prefix}: {' '.join(str(m) for m in message)}", err=True)
 
 
 def get_distro() -> str:
     """Return the running distribution."""
     data = dict(
-        line.split("=", 1) for line in Path("/etc/os-release").read_text().splitlines()
+        line.split("=", 1)
+        for line in Path("/etc/os-release").read_text().splitlines()
     )
     return data["ID"]
 
@@ -47,20 +114,18 @@ def run(
     process = subprocess.run(
         cmd,
         stdin=stdin,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        capture_output=True,
         env=env,
         cwd=cwd,
     )
     if process.returncode != 0:
-        msg("Command failed", *cmd)
         print("stdout:")
         for line in process.stdout.decode().splitlines():
             print(f"| {line}")
         print("stderr:")
         for line in process.stderr.decode().splitlines():
             print(f"| {line}")
-        raise SystemExit(1)
+        raise click.ClickException(f"Command failed: {' '.join(cmd)}")
     return process.stdout.decode()
 
 
@@ -89,7 +154,10 @@ class GPG:
             run(
                 ("gpg", "--import"),
                 stdin=seckey,
-                env={"GNUPGHOME": str(self.gpg_dir)},
+                env={
+                    "PATH": os.environ["PATH"],
+                    "GNUPGHOME": str(self.gpg_dir),
+                },
             )
 
 
@@ -143,7 +211,9 @@ class DebRepo(Repo):
                 ("include", "changes"),
                 ("includedsc", "dsc"),
             ):
-                for path in self.packages_dir.glob(f"{package.name}*.{suffix}"):
+                for path in self.packages_dir.glob(
+                    f"{package.name}*.{suffix}"
+                ):
                     self._reprepro(
                         "--outdir",
                         str(self.repo_dir),
@@ -205,7 +275,9 @@ class ArchRepo(Repo):
                 self._repo_add()
 
     def installed_packages(self) -> set[str]:
-        return set(line.split(" ")[0] for line in run(("pacman", "-Q")).splitlines())
+        return set(
+            line.split(" ")[0] for line in run(("pacman", "-Q")).splitlines()
+        )
 
     def _makepkg(self, path: Path) -> None:
         run(
@@ -228,11 +300,15 @@ DISTRO_REPOS: dict[str, type[Repo]] = {
 }
 
 
-def get_packages(work_dir: Path, packages_dir: Path, distro: str) -> t.Iterator[Path]:
+def get_packages(
+    work_dir: Path, packages_dir: Path, distro: str
+) -> t.Iterator[Path]:
     defs_dir = work_dir / "packages"
     defs_dir.mkdir()
 
-    template = Template((packages_dir / "templates" / f"{distro}.template").read_text())
+    template = Template(
+        (packages_dir / "templates" / f"{distro}.template").read_text()
+    )
     for package in (packages_dir / "defs").glob("*.yaml"):
         path = defs_dir / package.stem
         msg("PKG", str(path))
@@ -260,98 +336,7 @@ def _package_context(source: Path, distro: str) -> dict[str, t.Any]:
     return context
 
 
-def print_deps() -> None:
-    distro = get_distro()
-    for dep in sorted(DISTRO_REPOS[distro].REQUIRED_PACKAGES):
-        print(dep)
-
-
-def build_repo(keep_workdir: bool) -> None:
-    distro = get_distro()
-
-    REPO_DIR.mkdir(exist_ok=True)
-
-    with tempdir(cleanup=not keep_workdir) as work_dir:
-        msg("DIR", str(work_dir))
-        gpg = GPG(work_dir=work_dir, secret_key=Path("repo.key"))
-        gpg.setup()
-
-        repo: Repo
-        match distro:
-            case "ubuntu":
-                repo = DebRepo(
-                    work_dir=work_dir,
-                    repo_dir=REPO_DIR / "ubuntu",
-                    config_dir=CONFS_DIR / "reprepro",
-                    gpg_dir=gpg.gpg_dir,
-                )
-            case "arch":
-                repo = ArchRepo(
-                    work_dir=work_dir,
-                    repo_dir=REPO_DIR / "arch",
-                    gpg_dir=gpg.gpg_dir,
-                )
-            case _:
-                msg("Unsuported distribution", distro)
-                raise SystemExit(1)
-
-        if missing_packages := repo.missing_packages():
-            msg("Missing required packages", ", ".join(sorted(missing_packages)))
-            raise SystemExit(1)
-
-        repo.setup()
-        packages = get_packages(work_dir, PACKAGES_DIR, distro)
-        repo.build_and_import(*packages)
-
-    _add_static_files(REPO_DIR)
-
-
 def _add_static_files(target_dir: Path) -> None:
     for path in STATIC_DIR.iterdir():
         msg("CPY", path, target_dir)
         shutil.copy(path, target_dir)
-
-
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description=__doc__,
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-    )
-    subparsers = parser.add_subparsers(
-        metavar="ACTION", dest="action", help="action to perform"
-    )
-    subparsers.required = True
-
-    subparsers.add_parser(
-        "deps",
-        help="print out dependencies for the target distro",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-    )
-
-    build_action = subparsers.add_parser(
-        "build",
-        help="build repository",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-    )
-    build_action.add_argument(
-        "--keep-workdir",
-        help="keep working directory",
-        action="store_true",
-        default=False,
-    )
-
-    return parser.parse_args()
-
-
-def main() -> int:
-    args = parse_args()
-    match args.action:
-        case "deps":
-            print_deps()
-        case "build":
-            build_repo(args.keep_workdir)
-    return 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())

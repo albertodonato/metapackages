@@ -9,22 +9,12 @@ Supported distributions:
 - Ubuntu
 
 
-## Dependencies
-------------
-
-Python dependencies for the script can be installed via
-
-```bash
-pip install -r requirements.txt
-```
-
-
 ## Build
 
 Packages and repository are built via
 
 ```bash
-./repository build
+uv run repository build
 ```
 
 Result is in the `repo/<distro>` directory.
