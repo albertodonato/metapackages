@@ -9,6 +9,7 @@ from string import Template
 import subprocess
 from tempfile import mkdtemp
 import typing as t
+from typing import Self
 
 import click
 import yaml
@@ -31,10 +32,7 @@ def main() -> None:
 def deps() -> None:
     """Print out dependencies for the target distribution"""
     distro = get_distro()
-    try:
-        packages = DISTRO_REPOS[distro].REQUIRED_PACKAGES
-    except KeyError:
-        raise click.ClickException(f"Unsupported distribution: {distro}")
+    packages = Repo.for_distro(distro).required_packages
 
     for dep in sorted(packages):
         print(dep)
@@ -54,35 +52,22 @@ def build(keep_workdir: bool) -> None:
     REPO_DIR.mkdir(exist_ok=True)
 
     with tempdir(cleanup=not keep_workdir) as work_dir:
-        msg("DIR", str(work_dir))
         gpg = GPG(work_dir=work_dir, secret_key=Path("repo.key"))
-        gpg.setup()
+        repo = Repo.for_distro(distro)(
+            work_dir=work_dir,
+            repo_base_dir=REPO_DIR,
+            config_base_dir=CONFS_DIR,
+            gpg_dir=gpg.gpg_dir,
+        )
 
-        repo: Repo
-        match distro:
-            case "ubuntu":
-                repo = DebRepo(
-                    work_dir=work_dir,
-                    repo_dir=REPO_DIR / "ubuntu",
-                    config_dir=CONFS_DIR / "reprepro",
-                    gpg_dir=gpg.gpg_dir,
-                )
-            case "arch":
-                repo = ArchRepo(
-                    work_dir=work_dir,
-                    repo_dir=REPO_DIR / "arch",
-                    gpg_dir=gpg.gpg_dir,
-                )
-            case _:
-                raise click.ClickException(
-                    f"Unsupported distribution: {distro}"
-                )
+        msg("DIR", str(work_dir))
 
         if missing_packages := repo.missing_packages():
             raise click.ClickException(
                 f"Missing required packages: {', '.join(sorted(missing_packages))}"
             )
 
+        gpg.setup()
         repo.setup()
         packages = get_packages(work_dir, PACKAGES_DIR, distro)
         repo.build_and_import(*packages)
@@ -162,10 +147,38 @@ class GPG:
 
 
 class Repo(ABC):
-    REQUIRED_PACKAGES: frozenset[str] = frozenset()
+    required_packages: frozenset[str] = frozenset()
+    distribution: str
+
+    _registry: t.ClassVar[dict[str, type[Self]]] = {}
+
+    def __init_subclass__(cls, **kwargs: t.Any) -> None:
+        super().__init_subclass__(**kwargs)
+        Repo._registry[cls.distribution] = cls
+
+    @classmethod
+    def for_distro(cls, name: str) -> type[Self]:
+        if name not in cls._registry:
+            raise click.ClickException(f"Unsupported distribution: {name}")
+        return cls._registry[name]
+
+    def __init__(
+        self,
+        work_dir: Path,
+        repo_base_dir: Path,
+        config_base_dir: Path,
+        gpg_dir: Path,
+    ) -> None:
+        self.work_dir = work_dir
+        self.repo_dir = repo_base_dir / self.distribution
+        self.config_dir = config_base_dir / self.distribution
+        self.gpg_dir = gpg_dir
+        self.post_init()
+
+    def post_init(self) -> None: ...
 
     def missing_packages(self) -> frozenset[str]:
-        return self.REQUIRED_PACKAGES - self.installed_packages()
+        return self.required_packages - self.installed_packages()
 
     @abstractmethod
     def setup(self) -> None: ...
@@ -178,7 +191,9 @@ class Repo(ABC):
 
 
 class DebRepo(Repo):
-    REQUIRED_PACKAGES = frozenset(
+    distribution = "ubuntu"
+
+    required_packages = frozenset(
         (
             "equivs",
             "gpg",
@@ -188,13 +203,7 @@ class DebRepo(Repo):
 
     REPO_SUITE = "unstable"
 
-    def __init__(
-        self, work_dir: Path, repo_dir: Path, config_dir: Path, gpg_dir: Path
-    ) -> None:
-        self.work_dir = work_dir
-        self.repo_dir = repo_dir
-        self.config_dir = config_dir
-        self.gpg_dir = gpg_dir
+    def post_init(self) -> None:
         self.base_dir = self.work_dir / "reprepro"
         self.packages_dir = self.work_dir / "equivs"
 
@@ -243,7 +252,9 @@ class DebRepo(Repo):
 
 
 class ArchRepo(Repo):
-    REQUIRED_PACKAGES = frozenset(
+    distribution = "arch"
+
+    required_packages = frozenset(
         (
             "binutils",
             "fakeroot",
@@ -253,10 +264,7 @@ class ArchRepo(Repo):
 
     REPO_NAME = "personal"
 
-    def __init__(self, work_dir: Path, repo_dir: Path, gpg_dir: Path) -> None:
-        self.work_dir = work_dir
-        self.repo_dir = repo_dir
-        self.gpg_dir = gpg_dir
+    def post_init(self) -> None:
         self.base_dir = self.work_dir / "makepkg"
 
     def setup(self) -> None:
@@ -292,12 +300,6 @@ class ArchRepo(Repo):
             env={"GNUPGHOME": str(self.gpg_dir)},
             cwd=self.repo_dir,
         )
-
-
-DISTRO_REPOS: dict[str, type[Repo]] = {
-    "ubuntu": DebRepo,
-    "arch": ArchRepo,
-}
 
 
 def get_packages(

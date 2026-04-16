@@ -18,11 +18,6 @@ repos:
     hooks:
       - id: codespell
 
-  - repo: https://github.com/rstcheck/rstcheck
-    rev: v6.2.5
-    hooks:
-      - id: rstcheck
-
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
@@ -30,5 +25,4 @@ repos:
       - id: check-yaml
       - id: debug-statements
       - id: end-of-file-fixer
-      - id: name-tests-test
       - id: trailing-whitespace
