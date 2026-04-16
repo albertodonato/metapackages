@@ -175,13 +175,18 @@ class Repo(ABC):
         self.gpg_dir = gpg_dir
         self.post_init()
 
+
+    def setup(self) -> None:
+        shutil.rmtree(self.repo_dir, ignore_errors=True)
+        self.repo_dir.mkdir()
+        self.post_setup()
+
     def post_init(self) -> None: ...
+
+    def post_setup(self) -> None: ...
 
     def missing_packages(self) -> frozenset[str]:
         return self.required_packages - self.installed_packages()
-
-    @abstractmethod
-    def setup(self) -> None: ...
 
     @abstractmethod
     def build_and_import(self, *packages: Path) -> None: ...
@@ -207,9 +212,7 @@ class DebRepo(Repo):
         self.base_dir = self.work_dir / "reprepro"
         self.packages_dir = self.work_dir / "equivs"
 
-    def setup(self) -> None:
-        shutil.rmtree(self.repo_dir, ignore_errors=True)
-        self.repo_dir.mkdir()
+    def post_setup(self) -> None:
         self.base_dir.mkdir()
         self.packages_dir.mkdir()
 
@@ -244,7 +247,7 @@ class DebRepo(Repo):
             ("reprepro", *args),
             env={
                 "PATH": os.environ["PATH"],
-                "REPREPRO_CONFIG_DIR": str(self.config_dir),
+                "REPREPRO_CONFIG_DIR": str(self.config_dir / "reprepro"),
                 "REPREPRO_BASE_DIR": str(self.base_dir),
                 "GNUPGHOME": str(self.gpg_dir),
             },
@@ -267,9 +270,7 @@ class ArchRepo(Repo):
     def post_init(self) -> None:
         self.base_dir = self.work_dir / "makepkg"
 
-    def setup(self) -> None:
-        shutil.rmtree(self.repo_dir, ignore_errors=True)
-        self.repo_dir.mkdir()
+    def post_setup(self) -> None:
         self.base_dir.mkdir()
 
     def build_and_import(self, *packages: Path) -> None:
