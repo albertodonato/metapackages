@@ -5,7 +5,7 @@ requires = [
 ]
 
 [project]
-name = "repository"
+name = "metapackages"
 description = "Builder script for distribution repository with metapackages"
 readme = { file = "README.md", content-type = "text/markdown" }
 keywords = [
@@ -39,7 +39,7 @@ urls."Issue Tracker" = "https://github.com/albertodonato/metapackages/issues"
 urls."Source Code" = "https://github.com/albertodonato/metapackages"
 urls.Documentation = "https://github.com/albertodonato/metapackages"
 urls.Homepage = "https://github.com/albertodonato/metapackages"
-scripts.repository = "repository:main"
+scripts.metapackages = "metapackages:main"
 
 [dependency-groups]
 dev = [
@@ -53,8 +53,9 @@ types = [
 ]
 
 [tool.setuptools]
-dynamic.version = { attr = "repository.__version__" }
-py-modules = [ "repository" ]
+dynamic.version = { attr = "metapackages.__version__" }
+package-data.metapackages = [ "py.typed" ]
+packages.find.include = [ "metapackages*" ]
 
 [tool.ruff]
 line-length = 79
@@ -73,7 +74,7 @@ env_list = [ "lint", "check" ]
 
 [tool.tox.env.check]
 dependency_groups = [ "dev" ]
-commands = [ [ "ty", "check", "repository.py" ] ]
+commands = [ [ "ty", "check", "metapackages", { replace = "posargs", default = [], extend = true } ] ]
 
 [tool.tox.env.lint]
 package = "skip"

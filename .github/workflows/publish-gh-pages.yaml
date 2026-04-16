@@ -23,7 +23,7 @@ jobs:
       - name: Install packages
         run: |
           sudo apt update
-          sudo apt install -y $(uv run repository deps)
+          sudo apt install -y $(uv run metapackages deps)
 
       - name: Get signing key
         env:
@@ -33,7 +33,7 @@ jobs:
 
       - name: Build Ubuntu repository
         run: |
-          uv run repository build
+          uv run metapackages build
 
       - name: Upload repository as artifact
         id: deployment

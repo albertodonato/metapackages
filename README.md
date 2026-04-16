@@ -16,7 +16,7 @@ Supported distributions:
 Packages and repository are built via
 
 ```bash
-uv run repository build
+uv run metapackages build
 ```
 
 Result is in the `repo/<distro>` directory.
