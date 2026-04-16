@@ -31,8 +31,8 @@ def main() -> None:
 @main.command()
 def deps() -> None:
     """Print out dependencies for the target distribution"""
-    repo_class = get_repo_class()
-    for dep in sorted(repo_class.required_packages):
+    distro = get_distro()
+    for dep in sorted(distro.required_packages):
         click.echo(dep)
 
 
@@ -45,13 +45,13 @@ def deps() -> None:
 )
 def build(keep_workdir: bool) -> None:
     """Build repository"""
-    repo_class = get_repo_class()
+    distro = get_distro()
 
     REPO_DIR.mkdir(exist_ok=True)
 
     with tempdir(cleanup=not keep_workdir) as work_dir:
         gpg = GPG(work_dir=work_dir, secret_key=Path("repo.key"))
-        repo = repo_class(
+        repo = distro.repository(
             work_dir=work_dir,
             repo_base_dir=REPO_DIR,
             config_base_dir=CONFS_DIR,
@@ -60,14 +60,14 @@ def build(keep_workdir: bool) -> None:
 
         msg("DIR", str(work_dir))
 
-        if missing_packages := repo.missing_packages():
+        if missing_packages := distro.missing_packages():
             raise click.ClickException(
                 f"Missing required packages: {', '.join(sorted(missing_packages))}"
             )
 
         gpg.setup()
         repo.setup()
-        packages = get_packages(work_dir, PACKAGES_DIR, repo.distribution)
+        packages = get_packages(work_dir, PACKAGES_DIR, distro)
         repo.build_and_import(*packages)
 
     _add_static_files(REPO_DIR)
@@ -137,20 +137,7 @@ class GPG:
 
 
 class Repo(ABC):
-    required_packages: frozenset[str] = frozenset()
     distribution: str
-
-    _registry: t.ClassVar[dict[str, type[Self]]] = {}
-
-    def __init_subclass__(cls, **kwargs: t.Any) -> None:
-        super().__init_subclass__(**kwargs)
-        Repo._registry[cls.distribution] = cls
-
-    @classmethod
-    def for_distro(cls, name: str) -> type[Self]:
-        if name not in cls._registry:
-            raise click.ClickException(f"Unsupported distribution: {name}")
-        return cls._registry[name]
 
     def __init__(
         self,
@@ -174,38 +161,51 @@ class Repo(ABC):
 
     def post_setup(self) -> None: ...
 
+    @abstractmethod
+    def build_and_import(self, *packages: Path) -> None: ...
+
+
+class Distribution(ABC):
+    name: str
+    repository: type[Repo]
+    required_packages: frozenset[str] = frozenset()
+
+    _registry: t.ClassVar[dict[str, type[Self]]] = {}
+
+    def __init_subclass__(cls, **kwargs: t.Any) -> None:
+        super().__init_subclass__(**kwargs)
+        if hasattr(cls, "name"):
+            Distribution._registry[cls.name] = cls
+
+    @classmethod
+    def instance(cls, name: str) -> Self:
+        if name not in cls._registry:
+            raise click.ClickException(f"Unsupported distribution: {name}")
+        return cls._registry[name]()
+
     def missing_packages(self) -> frozenset[str]:
         return self.required_packages - self.installed_packages()
 
     @abstractmethod
-    def build_and_import(self, *packages: Path) -> None: ...
-
-    @abstractmethod
     def installed_packages(self) -> set[str]: ...
 
+    @abstractmethod
+    def dependency_list(self, packages: list[str]) -> str: ...
 
-def get_repo_class() -> type[Repo]:
-    """Return the Repo class for the current distro."""
+
+def get_distro() -> Distribution:
+    """Return a Distribution instance for the current distro."""
     distro_data = dict(
         line.split("=", 1)
         for line in Path("/etc/os-release").read_text().splitlines()
     )
-    distro = distro_data["ID"]
-    return Repo.for_distro(distro)
+    return Distribution.instance(distro_data["ID"])
 
 
 class DebRepo(Repo):
     distribution = "ubuntu"
 
-    required_packages = frozenset(
-        (
-            "equivs",
-            "gpg",
-            "reprepro",
-        )
-    )
-
-    REPO_SUITE = "unstable"
+    _repo_suite = "unstable"
 
     def post_init(self) -> None:
         self.base_dir = self.work_dir / "reprepro"
@@ -230,16 +230,9 @@ class DebRepo(Repo):
                         str(self.repo_dir),
                         "-VVV",
                         command,
-                        self.REPO_SUITE,
+                        self._repo_suite,
                         str(path),
                     )
-
-    def installed_packages(self) -> set[str]:
-        return set(
-            run(
-                ("dpkg-query", "-W", "-f", "${Package} "),
-            ).split()
-        )
 
     def _reprepro(self, *args: str) -> None:
         run(
@@ -253,16 +246,30 @@ class DebRepo(Repo):
         )
 
 
-class ArchRepo(Repo):
-    distribution = "arch"
-
+class DebDistribution(Distribution):
+    name = "ubuntu"
+    repository = DebRepo
     required_packages = frozenset(
         (
-            "binutils",
-            "fakeroot",
-            "gnupg",
+            "equivs",
+            "gpg",
+            "reprepro",
         )
     )
+
+    def installed_packages(self) -> set[str]:
+        return set(
+            run(
+                ("dpkg-query", "-W", "-f", "${Package} "),
+            ).split()
+        )
+
+    def dependency_list(self, packages: list[str]) -> str:
+        return ", ".join(packages)
+
+
+class ArchRepo(Repo):
+    distribution = "arch"
 
     REPO_NAME = "personal"
 
@@ -282,11 +289,6 @@ class ArchRepo(Repo):
                 shutil.copy(path, self.repo_dir)
                 self._repo_add()
 
-    def installed_packages(self) -> set[str]:
-        return set(
-            line.split(" ")[0] for line in run(("pacman", "-Q")).splitlines()
-        )
-
     def _makepkg(self, path: Path) -> None:
         run(
             ("makepkg",),
@@ -302,14 +304,34 @@ class ArchRepo(Repo):
         )
 
 
+class ArchDistribution(Distribution):
+    name = "arch"
+    repository = ArchRepo
+    required_packages = frozenset(
+        (
+            "binutils",
+            "fakeroot",
+            "gnupg",
+        )
+    )
+
+    def installed_packages(self) -> set[str]:
+        return set(
+            line.split(" ")[0] for line in run(("pacman", "-Q")).splitlines()
+        )
+
+    def dependency_list(self, packages: list[str]) -> str:
+        return " ".join(packages)
+
+
 def get_packages(
-    work_dir: Path, packages_dir: Path, distro: str
+    work_dir: Path, packages_dir: Path, distro: Distribution
 ) -> t.Iterator[Path]:
     defs_dir = work_dir / "packages"
     defs_dir.mkdir()
 
     template = Template(
-        (packages_dir / "templates" / f"{distro}.template").read_text()
+        (packages_dir / "templates" / f"{distro.name}.template").read_text()
     )
     for package in (packages_dir / "defs").glob("*.yaml"):
         path = defs_dir / package.stem
@@ -319,22 +341,18 @@ def get_packages(
         yield path
 
 
-def _package_context(source: Path, distro: str) -> dict[str, t.Any]:
+def _package_context(source: Path, distro: Distribution) -> dict[str, t.Any]:
     context: dict[str, t.Any] = yaml.safe_load(source.read_text())
-    deps = []
+
+    deps: set[str] = set()
     for dep in context.pop("dependencies"):
         if isinstance(dep, str):
-            deps.append(dep)
+            deps.add(dep)
         else:
-            if entry := dep.get(distro):
-                deps.append(entry)
-    deps.sort()
+            if entry := dep.get(distro.name):
+                deps.add(entry)
 
-    match distro:
-        case "ubuntu":
-            context["dependencies"] = ", ".join(deps)
-        case "arch":
-            context["dependencies"] = " ".join(deps)
+    context["dependencies"] = distro.dependency_list(sorted(deps))
     return context
 
 
