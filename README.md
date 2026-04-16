@@ -1,5 +1,7 @@
 # Repository with metapackages
 
+[![Build status](https://github.com/albertodonato/metapackages/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/albertodonato/metapackages/actions?query=workflow%3ACI+branch%3Amain)
+
 This builds metapackages to automatically install all desired dependencies on a
 Linux distribution.
 

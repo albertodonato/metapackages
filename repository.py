@@ -31,11 +31,9 @@ def main() -> None:
 @main.command()
 def deps() -> None:
     """Print out dependencies for the target distribution"""
-    distro = get_distro()
-    packages = Repo.for_distro(distro).required_packages
-
-    for dep in sorted(packages):
-        print(dep)
+    repo_class = get_repo_class()
+    for dep in sorted(repo_class.required_packages):
+        click.echo(dep)
 
 
 @main.command()
@@ -47,13 +45,13 @@ def deps() -> None:
 )
 def build(keep_workdir: bool) -> None:
     """Build repository"""
-    distro = get_distro()
+    repo_class = get_repo_class()
 
     REPO_DIR.mkdir(exist_ok=True)
 
     with tempdir(cleanup=not keep_workdir) as work_dir:
         gpg = GPG(work_dir=work_dir, secret_key=Path("repo.key"))
-        repo = Repo.for_distro(distro)(
+        repo = repo_class(
             work_dir=work_dir,
             repo_base_dir=REPO_DIR,
             config_base_dir=CONFS_DIR,
@@ -69,23 +67,15 @@ def build(keep_workdir: bool) -> None:
 
         gpg.setup()
         repo.setup()
-        packages = get_packages(work_dir, PACKAGES_DIR, distro)
+        packages = get_packages(work_dir, PACKAGES_DIR, repo.distribution)
         repo.build_and_import(*packages)
 
     _add_static_files(REPO_DIR)
 
 
 def msg(prefix: str, *message: t.Any) -> None:
+    """Print a message to stderr."""
     click.echo(f"--> {prefix}: {' '.join(str(m) for m in message)}", err=True)
-
-
-def get_distro() -> str:
-    """Return the running distribution."""
-    data = dict(
-        line.split("=", 1)
-        for line in Path("/etc/os-release").read_text().splitlines()
-    )
-    return data["ID"]
 
 
 def run(
@@ -175,19 +165,33 @@ class Repo(ABC):
         self.gpg_dir = gpg_dir
         self.post_init()
 
+    def setup(self) -> None:
+        shutil.rmtree(self.repo_dir, ignore_errors=True)
+        self.repo_dir.mkdir()
+        self.post_setup()
+
     def post_init(self) -> None: ...
+
+    def post_setup(self) -> None: ...
 
     def missing_packages(self) -> frozenset[str]:
         return self.required_packages - self.installed_packages()
-
-    @abstractmethod
-    def setup(self) -> None: ...
 
     @abstractmethod
     def build_and_import(self, *packages: Path) -> None: ...
 
     @abstractmethod
     def installed_packages(self) -> set[str]: ...
+
+
+def get_repo_class() -> type[Repo]:
+    """Return the Repo class for the current distro."""
+    distro_data = dict(
+        line.split("=", 1)
+        for line in Path("/etc/os-release").read_text().splitlines()
+    )
+    distro = distro_data["ID"]
+    return Repo.for_distro(distro)
 
 
 class DebRepo(Repo):
@@ -207,9 +211,7 @@ class DebRepo(Repo):
         self.base_dir = self.work_dir / "reprepro"
         self.packages_dir = self.work_dir / "equivs"
 
-    def setup(self) -> None:
-        shutil.rmtree(self.repo_dir, ignore_errors=True)
-        self.repo_dir.mkdir()
+    def post_setup(self) -> None:
         self.base_dir.mkdir()
         self.packages_dir.mkdir()
 
@@ -244,7 +246,7 @@ class DebRepo(Repo):
             ("reprepro", *args),
             env={
                 "PATH": os.environ["PATH"],
-                "REPREPRO_CONFIG_DIR": str(self.config_dir),
+                "REPREPRO_CONFIG_DIR": str(self.config_dir / "reprepro"),
                 "REPREPRO_BASE_DIR": str(self.base_dir),
                 "GNUPGHOME": str(self.gpg_dir),
             },
@@ -267,9 +269,7 @@ class ArchRepo(Repo):
     def post_init(self) -> None:
         self.base_dir = self.work_dir / "makepkg"
 
-    def setup(self) -> None:
-        shutil.rmtree(self.repo_dir, ignore_errors=True)
-        self.repo_dir.mkdir()
+    def post_setup(self) -> None:
         self.base_dir.mkdir()
 
     def build_and_import(self, *packages: Path) -> None:
