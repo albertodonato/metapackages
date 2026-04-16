@@ -33,6 +33,7 @@ dynamic = [
 ]
 dependencies = [
   "click",
+  "pydantic",
   "pyyaml",
 ]
 urls."Issue Tracker" = "https://github.com/albertodonato/metapackages/issues"

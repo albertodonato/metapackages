@@ -2,7 +2,7 @@ name: ack-desktop
 version: 146
 maintainer: Alberto Donato <packages@albertodonato.net>
 title: metapackage for dependencies on a desktop machine
-description: This installs a whole set of packages that I currently use.
+description: Whole set of packages for a desktop.
 url: https://repo.albertodonato.net
 dependencies:
   - ubuntu: adwaita-icon-theme-full

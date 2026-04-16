@@ -2,10 +2,11 @@ from pathlib import Path
 import shutil
 
 import click
+import yaml
 
 from .distribution import get_distribution
 from .gpg import GPG
-from .packages import write_packages
+from .packages import Package, PackageDefinition, write_packages
 from .utils import msg, tempdir
 
 BASE_DIR = Path.cwd()
@@ -26,6 +27,21 @@ def deps() -> None:
     distro = get_distribution()
     for dep in sorted(distro.required_packages):
         click.echo(dep)
+
+
+@main.command()
+def packages() -> None:
+    """List packages for the current distribution as YAML"""
+    distro = get_distribution()
+    result: dict[str, dict] = {}
+    for path in (PACKAGES_DIR / "defs").glob("*.yaml"):
+        definition = PackageDefinition.model_validate(
+            yaml.safe_load(path.read_text())
+        )
+        package = Package.from_definition(definition, distro.name)
+        if package:
+            result[package.name] = package.model_dump(exclude={"name"})
+    click.echo(yaml.dump(result, default_flow_style=False), nl=False)
 
 
 @main.command()
