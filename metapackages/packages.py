@@ -71,9 +71,10 @@ def write_packages(
     template = Template(
         (packages_dir / "templates" / f"{distro.name}.template").read_text()
     )
-    for package in (packages_dir / "defs").glob("*.yaml"):
-        path = defs_dir / package.stem
-        content = yaml.safe_load(path.read_text())
+    for package_def in (packages_dir / "defs").glob("*.yaml"):
+        path = defs_dir / package_def.stem
+
+        content = yaml.safe_load(package_def.read_text())
         definition = PackageDefinition.model_validate(content)
         package = Package.from_definition(definition, distro.name)
         if not package:
