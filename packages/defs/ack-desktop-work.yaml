@@ -20,6 +20,6 @@ dependencies:
   - nix-bin
   - nix-setup-systemd
   - openssh-server
+  - stow
   - vim
-  - xclip
   - zsh
