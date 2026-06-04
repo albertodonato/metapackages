@@ -54,9 +54,9 @@ types = [
 ]
 
 [tool.setuptools]
-dynamic.version = { attr = "metapackages.__version__" }
-package-data.metapackages = [ "py.typed" ]
 packages.find.include = [ "metapackages*" ]
+package-data.metapackages = [ "py.typed" ]
+dynamic.version = { attr = "metapackages.__version__" }
 
 [tool.ruff]
 line-length = 79
@@ -71,7 +71,7 @@ expand_tables = [ "tool.tox" ]
 rules.unresolved-import = "ignore"
 
 [tool.tox]
-env_list = [ "lint", "check" ]
+env_list = [ "check", "lint" ]
 
 [tool.tox.env.check]
 dependency_groups = [ "dev" ]
