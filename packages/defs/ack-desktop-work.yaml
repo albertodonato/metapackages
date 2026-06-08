@@ -1,5 +1,5 @@
 name: ack-desktop-work
-version: 3
+version: 4
 maintainer: Alberto Donato <packages@albertodonato.net>
 title: metapackage for dependencies on a desktop machine for work
 description: Whole set of packages for a desktop for work.
@@ -20,6 +20,8 @@ dependencies:
   - nix-bin
   - nix-setup-systemd
   - openssh-server
+  - ovmf
   - stow
   - vim
+  - virt-manager
   - zsh
