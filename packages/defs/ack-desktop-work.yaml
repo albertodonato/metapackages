@@ -23,6 +23,7 @@ dependencies:
   - nix-setup-systemd
   - openssh-server
   - ovmf
+  - postgresql-client
   - stow
   - vim
   - virt-manager
