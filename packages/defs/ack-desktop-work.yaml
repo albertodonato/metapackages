@@ -1,5 +1,5 @@
 name: ack-desktop-work
-version: 5
+version: 6
 maintainer: Alberto Donato <packages@albertodonato.net>
 title: metapackage for dependencies on a desktop machine for work
 description: Whole set of packages for a desktop for work.
@@ -15,7 +15,7 @@ dependencies:
   - gnome-clocks
   - gnome-session
   - gnome-shell-extension-manager
-  - gnome-termnial
+  - gnome-terminal
   - gnome-tweaks
   - gnome-weather
   - nix-bin
