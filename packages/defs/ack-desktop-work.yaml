@@ -1,5 +1,5 @@
 name: ack-desktop-work
-version: 7
+version: 8
 maintainer: Alberto Donato <packages@albertodonato.net>
 title: metapackage for dependencies on a desktop machine for work
 description: Whole set of packages for a desktop for work.
@@ -25,6 +25,7 @@ dependencies:
   - ovmf
   - postgresql-client
   - stow
+  - ubuntu-desktop
   - vim
   - virt-manager
   - zsh
