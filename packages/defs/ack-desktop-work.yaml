@@ -1,5 +1,5 @@
 name: ack-desktop-work
-version: 8
+version: 9
 maintainer: Alberto Donato <packages@albertodonato.net>
 title: metapackage for dependencies on a desktop machine for work
 description: Whole set of packages for a desktop for work.
@@ -8,6 +8,7 @@ distributions:
   - ubuntu
 dependencies:
   - adwaita-icon-theme
+  - adwaita-icon-theme-legacy
   - dconf-editor
   - fonts-cantarell
   - fonts-hack
@@ -15,7 +16,6 @@ dependencies:
   - gnome-clocks
   - gnome-session
   - gnome-shell-extension-manager
-  - gnome-terminal
   - gnome-tweaks
   - gnome-weather
   - libsecret-tools
