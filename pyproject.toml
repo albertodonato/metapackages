@@ -15,10 +15,10 @@ keywords = [
 license = "Apache-2.0"
 license-files = [ "LICENSE.txt" ]
 maintainers = [
-  { name = "Alberto Donato", email = "alberto@albertodonato.net" },
+  { name = "Alberto Donato", email = "oss@albertodonato.net" },
 ]
 authors = [
-  { name = "Alberto Donato", email = "alberto@albertodonato.net" },
+  { name = "Alberto Donato", email = "oss@albertodonato.net" },
 ]
 requires-python = ">=3.12"
 classifiers = [
