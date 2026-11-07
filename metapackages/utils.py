@@ -1,4 +1,4 @@
-from collections.abc import Iterator, Mapping
+from collections.abc import Generator, Mapping
 from contextlib import contextmanager
 from pathlib import Path
 from shutil import rmtree
@@ -41,7 +41,7 @@ def run(
 
 
 @contextmanager
-def tempdir(cleanup: bool = True) -> Iterator[Path]:
+def tempdir(cleanup: bool = True) -> Generator[Path]:
     """Contextmanager with temporary directory."""
     path = Path(mkdtemp())
     try:
